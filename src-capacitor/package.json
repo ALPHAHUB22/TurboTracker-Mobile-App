@@ -1,0 +1,16 @@
+{
+  "name": "turbotracker",
+  "version": "0.0.1",
+  "description": "Inventory Management",
+  "author": "Arun <arun.r@riverstonetech.com>",
+  "private": true,
+  "dependencies": {
+    "@capacitor/android": "^7.0.1",
+    "@capacitor/app": "^6.0.0",
+    "@capacitor/camera": "^6.0.0",
+    "@capacitor/cli": "^7.0.1",
+    "@capacitor/core": "^7.0.1",
+    "@capacitor/http": "^0.0.2",
+    "@quasar/app": "^3.3.3"
+  }
+}
