@@ -1,12 +1,15 @@
 <template>
-  <q-header elevated style="position: fixed;">
-    <q-toolbar>
-      <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
-      <q-toolbar-title>
-        TurboTracker
-      </q-toolbar-title>
-    </q-toolbar>
-  </q-header>
+  <q-toolbar>
+    <q-toolbar-title class="row col justify-between">
+      <q-btn size="md" class="col-2" flat color="white">
+        <q-avatar style="border-radius: 10px;" size="lg">
+          <img src="https://cdn.quasar.dev/img/boy-avatar.png">
+        </q-avatar>
+      </q-btn>
+      <text-caption class="q-mt-sm col-8 text-center">TurboTracker</text-caption>
+      <q-btn flat class="col-2" icon="logout"></q-btn>
+    </q-toolbar-title>
+  </q-toolbar>
   <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
     <q-list>
       <q-item-label header>

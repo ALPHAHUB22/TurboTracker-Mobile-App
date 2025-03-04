@@ -5,7 +5,7 @@ import { Notify } from 'quasar'
 // Create an Axios instance
 const apiClient = axios.create({
   // baseURL: localStorage.getItem("siteUrl"), // Replace with your API base URL
-  baseURL: "", // Replace with your API base URL
+  baseURL: "http://localhost:8008/", // Replace with your API base URL
   timeout: 10000, // Set a timeout
   headers: {
     'Content-Type': 'application/json',
@@ -37,7 +37,7 @@ apiClient.interceptors.response.use(
       icon: 'warning',
       message: `API Error:' ${error.response?.data?.exception || error.message}`
     })
-    return Promise.reject(error);
+    // return Promise.reject(error);
   }
 );
 

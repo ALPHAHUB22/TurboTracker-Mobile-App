@@ -12,18 +12,31 @@ const routes = [
     ],
     meta: { requiresAuth: true }
   },
+  // {
+  //   path: "/",
+  //   name: "test",
+  //   component: () => import("pages/Test.vue")
+  // },
   {
     path: "/inventory",
-    name: "InventoryLog",
+    name: "InventoryLogList",
     component: () => import("pages/inventory/InventoryList.vue"),
     meta: { requiresAuth: true }
   },
   {
-    path: "/inventoryForm",
-    name: "InventoryForm",
-    component: () => import("pages/inventory/InventoryForm.vue"),
+    path: "/inventoryForm/new",
+    name: "InventoryLogForm",
+    props: true,
+    component: () => import("src/views/inventory/InventoryForm.vue"),
     meta: { requiresAuth: true }
   },
+  {
+		path: "/inventoryForm/:inventoryLogId",
+    name: "InventoryLogDetailView",
+		props: true,
+		component: () => import("src/views/inventory/InventoryForm.vue"),
+    meta: { requiresAuth: true }
+	},
   // Always leave this as last one,
   // but you can also remove it
   {
@@ -42,6 +55,10 @@ const routes = [
     component: () => import("pages/ErrorNotFound.vue"),
     meta: { requiresAuth: true }
   },
+  // {
+  //   path: "/test",
+  //   component: () => import("pages/Test.vue")
+  // },
 ];
 
 export default routes;

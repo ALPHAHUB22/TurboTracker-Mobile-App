@@ -12,7 +12,8 @@ export default defineConfig((/* ctx */) => {
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
     boot: [
-      "axios"
+      "axios",
+      "capacitor"
     ],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#css
@@ -22,6 +23,7 @@ export default defineConfig((/* ctx */) => {
 
     // https://github.com/quasarframework/quasar/tree/dev/extras
     extras: [
+      'bootstrap-icons',
       // 'ionicons-v4',
       // 'mdi-v7',
       // 'fontawesome-v6',
@@ -69,13 +71,13 @@ export default defineConfig((/* ctx */) => {
     devServer: {
       // https: true,
       open: true, // opens browser window automatically,
-      proxy: {
-        '/api': {
-          target: 'http://10.0.0.91:8008',
-          changeOrigin: true,
-          secure: false
-        }
-      }
+      // proxy: {
+      //   '/api': {
+      //     target: 'http://10.0.0.91:8008',
+      //     changeOrigin: true,
+      //     secure: false
+      //   }
+      // }
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#framework

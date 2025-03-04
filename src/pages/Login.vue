@@ -49,7 +49,7 @@ async function onSubmit() {
       email_id: email.value,
       password: password.value
     }
-    var response = await apiClient.post(`/api/method/turbotracker.mobile_integ.login`, data)
+    var response = await axios.post(`http://localhost:8008/api/method/turbotracker.mobile_integ.login`, data)
     if (response?.data?.message?.access_token) {
         response = response.data.message
         localStorage.setItem('accessToken', response.access_token);

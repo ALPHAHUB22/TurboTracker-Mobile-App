@@ -1,4 +1,9 @@
-// app global css in SCSS form
-body{
-    font-family: -apple-system, BlinkMacSystemFont, "San Francisco", "Helvetica Neue", Helvetica, Arial, sans-serif;
+@import url('https://fonts.googleapis.com/css2?family=Arabetics+Symphony&display=swap');
+
+body {
+  font-family: 'Arabetics Symphony', sans-serif !important;
+}
+
+.q-layout{
+  background-color: rgb(224, 245, 253);
 }

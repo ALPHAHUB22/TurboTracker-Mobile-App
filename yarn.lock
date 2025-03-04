@@ -60,19 +60,12 @@
     tslib "^2.8.1"
     xml2js "^0.6.2"
 
-"@capacitor/core@^7.0.1", "@capacitor/core@>=7.0.0", "@capacitor/core@latest":
+"@capacitor/core@^7.0.1", "@capacitor/core@>=7.0.0":
   version "7.0.1"
   resolved "https://registry.npmjs.org/@capacitor/core/-/core-7.0.1.tgz"
   integrity sha512-1Ob9bvA/p8g8aNwK6VesxEekGXowLVf6APjkW4LRnr05H+7z/bke+Q5pn9zqh/GgTbIxAQ/rwZrAZvvxkdm1UA==
   dependencies:
     tslib "^2.1.0"
-
-"@capacitor/http@^0.0.2":
-  version "0.0.2"
-  resolved "https://registry.npmjs.org/@capacitor/http/-/http-0.0.2.tgz"
-  integrity sha512-3UPqYOmVkAQjCWWowSDGPnBkXY7znbPE7lNs8nhwTmE2E5fXTvjHM8PV15zOyn+nenY7zEu9Air49fGjrX+Tjg==
-  dependencies:
-    "@capacitor/core" latest
 
 "@esbuild/linux-x64@0.24.0":
   version "0.24.0"
@@ -92,6 +85,11 @@
     "@ionic/utils-terminal" "2.3.5"
     debug "^4.0.0"
     tslib "^2.0.1"
+
+"@ionic/pwa-elements@^3.3.0":
+  version "3.3.0"
+  resolved "https://registry.npmjs.org/@ionic/pwa-elements/-/pwa-elements-3.3.0.tgz"
+  integrity sha512-vbykpxd2nGRlA67AnqDwsiVf8PUmInLyi6lQdnPDjeiML1WZa0CPe6r632nGDV9PTi+sWNde9Xexg9SD6Pwyqw==
 
 "@ionic/utils-array@2.1.6":
   version "2.1.6"
@@ -266,10 +264,10 @@
     vite "^6.0.3"
     webpack-merge "^6.0.1"
 
-"@quasar/extras@^1.16.4":
-  version "1.16.15"
-  resolved "https://registry.npmjs.org/@quasar/extras/-/extras-1.16.15.tgz"
-  integrity sha512-ZM8rUAagZ3Gm7Thu6DjKdGfkyFBv61RaCeVSIWdve6+q300yN+6aouxttf2RmxCk12RsSqEyzBnIg7BlF1s7MA==
+"@quasar/extras@^1.16.17":
+  version "1.16.17"
+  resolved "https://registry.npmjs.org/@quasar/extras/-/extras-1.16.17.tgz"
+  integrity sha512-4aX9XU/oj1+8O2C7LQCgywmoIw7suyUEZMPFFLWI61f21mF55VOsMdLCBhjeFgL5U4EWy079mfOR6/J8thi/ag==
 
 "@quasar/render-ssr-error@^1.0.3":
   version "1.0.3"

@@ -1,39 +1,39 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view="lHh Lpr lFf" style="background-color: #d1eff9;">
     <q-page-container>
-      <q-header>
+      <q-header style="background-color: #d1eff9;">
         <q-toolbar>
-          <q-toolbar-title>
+          <q-toolbar-title style="color: black">
             TurboTracker
           </q-toolbar-title>
           <div class="q-gutter-sm">
-            <q-btn color="white" size="11px" text-color="primary" icon="filter_alt" @click="togglefilter()" />
-            <q-btn color="white" size="11px" :to="{ name: 'InventoryForm' }" text-color="primary">+ Add</q-btn>
+            <q-btn color="white" icon="add" size="11px" :to="{ name: 'InventoryLogForm' }" text-color="primary" />
           </div>
         </q-toolbar>
       </q-header>
-      <!-- <q-btn-group flat>
-      <q-btn  color="white" text-color="primary"  icon="filter_alt" />
-      <q-btn  color="white" text-color="primary" icon="filter_alt_off" size="12px" style="width: 20%;"/>
-    </q-btn-group> -->
-      <!-- <q-pull-to-refresh @refresh="refresh"> -->
-        <ListCards :filters="filteredRows"/>
-        <q-dialog v-model="visible" :position="'top'">
-          <q-card>
-            <div class="q-pa-md q-gutter-sm">
-              <q-select filled label="Select Items" clearable v-model="items" use-input use-chips multiple
-                input-debounce="0" @new-value="itemCreateValue" :options="itemfilterOptions" @filter="itemFilterFn" />
-              <q-select filled label="Select Building" v-model="building" use-input input-debounce="0"
-                @new-value="buildingCreateValue" clearable :options="buildingfilterOptions"
-                @filter="buildingFilterFn" />
-              <q-checkbox v-model="isArchive" label="Show Archive" />
-              <div class="q-gutter-xs float-right">
+      <div class="q-mx-md search flex">
+        <!-- <q-icon color="black" name="search" style="size: 5px; align-self: center;height: 5.6vh;"/> -->
+        <input class="search-bar" style="flex-grow: 10" v-model="searchText" placeholder="Search">
+        </input>
+
+        <q-btn style="flex-grow: 1; align-self: center;height: 5.6vh;" dense class="filter-btn" icon="tune" @click="togglefilter()" />
+      </div>
+      <ListCards :filters="filteredRows" />
+      <q-dialog v-model="visible" :position="'top'">
+        <q-card>
+          <div class="q-pa-md q-gutter-sm">
+            <q-select filled label="Select Items" clearable v-model="items" use-input use-chips multiple
+              input-debounce="0" @new-value="itemCreateValue" :options="itemfilterOptions" @filter="itemFilterFn" />
+            <q-select filled label="Select Building" v-model="building" use-input input-debounce="0"
+              @new-value="buildingCreateValue" clearable :options="buildingfilterOptions" @filter="buildingFilterFn" />
+            <q-checkbox v-model="isArchive" label="Show Archive" />
+            <div class="q-gutter-xs float-right">
               <q-btn color="primary" @click="clearFilter()" icon="filter_alt_off" />
               <q-btn color="primary" @click="recordFilter()" icon="filter_alt" label="Filter" />
             </div>
-            </div>
-          </q-card>
-        </q-dialog>
+          </div>
+        </q-card>
+      </q-dialog>
       <!-- </q-pull-to-refresh> -->
     </q-page-container>
     <Footer />
@@ -54,8 +54,8 @@ function togglefilter() {
 const itemOptions = ref([])
 const itemfilterOptions = ref([])
 const items = ref([])
-const get_item_list = async() => {
-  const response = await apiClient.get('/api/resource/Item?limit_start=1&limit_page_length=1000')
+const get_item_list = async () => {
+  const response = await apiClient.get('/api/resource/Item?limit_start=0&limit_page_length=1000')
   itemOptions.value = response.data.data.map(row => row.name)
   itemfilterOptions.value = itemOptions.value
 }
@@ -66,7 +66,7 @@ const buildingfilterOptions = ref([])
 const building = ref(null)
 const isArchive = ref(false)
 
-const get_building_list = async() => {
+const get_building_list = async () => {
   const response = await apiClient.get('/api/resource/Warehouse?filters=[["custom_is_building", "=", 1]]&limit_start=0&limit_page_length=1000')
   buildingOptions.value = response.data.data.map(row => row.name)
   buildingfilterOptions.value = buildingOptions.value
@@ -159,12 +159,11 @@ function recordFilter() {
   if (building.value) {
     filterConditions.push(["building", building.value])
   }
-  if(isArchive.value){
+  if (isArchive.value) {
     filterConditions.push(["archived", isArchive.value])
   }
   filteredRows.value = filterConditions
-  // console.log(filteredRows.value)
-  // visible.value = false
+  visible.value = false
 }
 
 const clearFilter = () => {
@@ -175,3 +174,8 @@ const clearFilter = () => {
 }
 
 </script>
+<style scoped>
+.search-bar{
+  border: none
+}
+</style>

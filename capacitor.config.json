@@ -4,5 +4,10 @@
   "webDir": "dist/spa",
   "server": {
     "cleartext": true
+  },
+  "plugins": {
+  "Camera": {
+    "permissions": ["camera", "photos"]
   }
+}
 }
