@@ -41,7 +41,7 @@ import axios from 'axios';
 const router = useRouter();
 
 const isPwd = ref(true)
-const email = ref("arun.r@riverstonetech.coms")
+const email = ref("arun.r@riverstonetech.com")
 const password = ref("alpha@123")
 
 async function onSubmit() {

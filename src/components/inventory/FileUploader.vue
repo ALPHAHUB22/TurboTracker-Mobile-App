@@ -18,22 +18,22 @@
   </div>
   <!-- <FilePreview v-if="isPreview" v-model:isPreview="isPreview" v-model:previewAttachment="previewAttachment" v-model:attachments="props.attachments" /> -->
   <q-dialog v-model="isPreview" :backdrop-filter="'blur(4px) saturate(150%)'">
-    <q-card>
-      <img :src="previewAttachment.download_url">
-      <q-card-actions align="right">
-        <q-btn class="text-caption" style="border: 1px solid red;" :loading="delLoading"
+    <q-card style="border-radius: 10px;">
+      <q-card-actions style="position: absolute; right: 0%;z-index: 1;">
+        <q-btn class="text-caption" size="md" style="border: 1px solid red; background-color: red;" :loading="delLoading"
           @click="() => confirmDeleteAttachment(previewAttachment)">
-          <q-icon color="red" size="20px" name="bi-trash"></q-icon>
+          <q-icon color="white" name="bi-trash"></q-icon>
         </q-btn>
-        <q-btn class="text-caption download-btn" :loading="downloadLoading"
+        <q-btn class="text-caption download-btn" size="md" :loading="downloadLoading"
           @click="downloadFile(previewAttachment.download_url)">
-          <q-icon size="20px" name="bi-download"></q-icon>
+          <q-icon name="bi-download"></q-icon>
         </q-btn>
       </q-card-actions>
+      <img :src="previewAttachment.download_url">
     </q-card>
   </q-dialog>
-  <q-dialog v-model="deleteDialog" :backdrop-filter="'hue-rotate(120deg)'">
-    <q-card>
+  <q-dialog v-model="deleteDialog" :backdrop-filter="'blur(4px) saturate(150%)'">
+    <q-card style="border-radius: 10px;">
       <q-card-section class="row items-center q-pb-none text-bold">
         Delete Attachment
       </q-card-section>

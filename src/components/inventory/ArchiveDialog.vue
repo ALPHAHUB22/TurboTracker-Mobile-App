@@ -1,6 +1,6 @@
 <template>
   <q-dialog v-model="isArchiveDialog" :backdrop-filter="'blur(4px) saturate(150%)'">
-    <q-card>
+    <q-card style="border-radius: 10px;">
       <q-card-section class="row items-center q-pb-none text-bold">
           Archive
         </q-card-section>

@@ -13,7 +13,7 @@
       <!-- </q-header> -->
       <div class="q-mx-md q-mt-xs search flex">
         <div class="input-wrapper" style="width: 100%; height: 5.7vh;">
-          <q-icon class="q-pl-sm" color="black" name="search" size="sm" />
+          <q-icon class="q-pl-sm" name="search" size="sm" />
           <input type="text" placeholder="Search" v-model="searchText" />
           <q-icon v-if="searchText" size="sm" name="close" @click="searchText = ''" />
           <q-btn style="align-self: center;height: 5.5vh;border: 1px solid #42C2FF;" :style="isFilterApplied ? {color: 'white', backgroundColor: 'rgb(66, 194, 255)'} : {color: 'rgb(66, 194, 255)'}" dense class="filter-btn" icon="bi-filter" @click="togglefilter()">

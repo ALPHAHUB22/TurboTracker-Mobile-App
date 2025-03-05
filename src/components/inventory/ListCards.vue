@@ -63,8 +63,8 @@
             <!-- <q-img :src="dialogRow.image" style="min-width:310px;" /> -->
             <q-img :src="dialogRow.image" :ratio="1" />
             <q-card-section class="q-pa-none">
-              <div class="row justify-end q-gutter-xs q-mr-xs">
-                <q-btn class="col-1 popbutton" size="12px" flat icon="bi-archive" />
+              <div class="row justify-end q-gutter-xs q-mr-md">
+                <!-- <q-btn class="col-1 popbutton" size="12px" flat icon="bi-archive" /> -->
                 <q-btn class="col-1 popbutton" size="12px" flat icon="bi-pencil-square"
                   :to="{ name: 'InventoryLogDetailView', params: { inventoryLogId: dialogRow.name } }" />
               </div>
