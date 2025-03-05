@@ -1,10 +1,10 @@
 <template>
   <div class="q-pa-md row items-start">
     <div class="my-card q-gutter-sm">
-      <q-card>
-        <q-card-section>
-          <div class="text-subtitle2">Hey, {{userInfo.name}}</div>
-          <div class="text-caption text-grey-7 text-bold">{{formattedDate}}</div>
+      <q-card v-ripple style="border: 1px solid #42C2FF">
+        <q-card-section class="text-center">
+          <div class="text-subtitle2 text-bold">Hey, {{userInfo.name}}</div>
+          <div class="text-caption">{{formattedDate}}</div>
         </q-card-section>
       </q-card>
     </div>

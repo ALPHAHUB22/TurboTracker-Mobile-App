@@ -2,7 +2,6 @@ import { markRaw } from "vue"
 import { apiClient } from 'src/boot/axios';
 
 // const weekData = response.data.message
-export const buildingList = await get_building()
 
 async function get_building(){
   const params = {
@@ -24,3 +23,13 @@ async function get_building(){
   quicklinks = JSON.parse(JSON.stringify(quicklinks))
   return quicklinks
 }
+
+async function dashInfo() {
+  const response = await apiClient.get('/api/method/turbotracker.mobile_integ.inventory.dash_info')
+  let dashInfoList = []
+  dashInfoList = response.data.message
+  return dashInfoList
+}
+
+export const buildingList = await get_building()
+export const dashInfoList = await dashInfo()

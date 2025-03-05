@@ -1,12 +1,12 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
-      <q-toolbar>
+    <!-- <q-header style="background-color: white;color:black" class="no-shadow" elevated> -->
+      <q-toolbar style="position: fixed; z-index: 1;background-color: rgb(239, 251, 255);color:black">
         <q-btn flat dense icon="keyboard_arrow_left" aria-label="Menu" @click="$router.go(-1)" />
         <q-toolbar-title class="text-subtitle1">
           {{ inventoryLogId ? inventoryLogId : 'New'}}
         </q-toolbar-title>
-        <q-btn flat icon="more_vert" color="white">
+        <q-btn flat icon="more_vert">
           <q-menu transition-show="flip-right" transition-hide="flip-left" :offset="[0, 5]">
             <q-list>
               <q-item v-if="!isArchive" v-ripple clickable @click="() => { isArchiveDialog = true }">
@@ -19,8 +19,8 @@
           </q-menu>
         </q-btn>
       </q-toolbar>
-    </q-header>
-    <q-page-container>
+    <!-- </q-header> -->
+    <q-page-container style="padding-top: 40px;">
       <q-form :ref="myForm" @submit="handleSubmit" >
         <div class="q-pa-md q-mb-xl">
           <div class="q-mb-md row justify-around">
@@ -75,7 +75,7 @@
 
         <q-page-sticky expand position="bottom">
           <div class="q-pa-sm row justify-center" style="width: 100%;background-color: rgb(224, 245, 253)">
-            <q-btn class="bg-primary text-white col-11" type="submit" :label="inventoryLogId ? 'Update' : 'Submit'"></q-btn>
+            <q-btn class="col-11 text-bold" style="background-color: #42C2FF;color: white;" type="submit" :label="inventoryLogId ? 'Update' : 'Submit'"></q-btn>
           </div>
         </q-page-sticky>
       </q-form>
@@ -120,7 +120,9 @@ const myForm = ref(null)
 const item = createReactiveEntity();
 // const itemGroup = createReactiveEntity();
 const building = createReactiveEntity();
+building.selected = localStorage.getItem("building")
 const floor = createReactiveEntity();
+floor.selected = localStorage.getItem("floor")
 const manufacturer = createReactiveEntity();
 const uom = reactive({
     options: ref([]),
@@ -159,6 +161,8 @@ const isArchive = ref(false)
 const isArchiveDialog = ref(false)
 async function onSubmit(){
   try {
+    localStorage.setItem("building", formData.building)
+    localStorage.setItem("floor", formData.floor)
     const response = await apiClient.post('/api/method/turbotracker.mobile_integ.inventory.create_inventory_log', formData);
     Notify.create({
       color: 'green-5',
@@ -336,7 +340,6 @@ async function getInventoryLog(){
     }
     const response = await apiClient.get('/api/method/turbotracker.mobile_integ.inventory.get_inventory_log', { params })
     const data = response.data.message
-    console.log(data)
     isArchive.value = data.archived
     attachments.value = data.attachments
     updateFormData(data)
@@ -435,5 +438,8 @@ async function unArchiveLog(){
 }
 .q-select{
   /* background-color: white; */
+}
+.q-layout{
+  background: linear-gradient(to bottom, rgb(247, 251, 253) , rgb(239, 251, 255))
 }
 </style>

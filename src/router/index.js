@@ -38,7 +38,6 @@ export default defineRouter(function (/* { store, ssrContext } */) {
           },
         }
       )
-    console.log("fetchUser")
     if(fetchUser?.data?.message){
       return true;
     } else {

@@ -24,6 +24,13 @@ const routes = [
     meta: { requiresAuth: true }
   },
   {
+		name: "InventoryLogBuildingListView",
+		path: "/inventory/building/:filter",
+		props: true,
+		component: () => import("pages/inventory/InventoryList.vue"),
+    meta: { requiresAuth: true }
+	},
+  {
     path: "/inventoryForm/new",
     name: "InventoryLogForm",
     props: true,
@@ -44,12 +51,6 @@ const routes = [
     name: "login",
     component: () => import("pages/Login.vue"),
   },
-  {
-		name: "InventoryLogBuildingListView",
-		path: "/inventory/building/:filter",
-		props: true,
-		component: () => import("pages/inventory/InventoryList.vue"),
-	},
   {
     path: "/:catchAll(.*)*",
     component: () => import("pages/ErrorNotFound.vue"),

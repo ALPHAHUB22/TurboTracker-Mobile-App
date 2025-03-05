@@ -25,8 +25,8 @@
   },
   "devDependencies": {
     "@quasar/app-vite": "^2.0.0",
-    "autoprefixer": "^10.4.2",
-    "postcss": "^8.4.14"
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.3"
   },
   "engines": {
     "node": "^28 || ^26 || ^24 || ^22 || ^20 || ^18",

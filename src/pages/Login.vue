@@ -1,11 +1,13 @@
 <template>
   <q-layout view="lHh Lpr fff">
     <q-page-container>
-      <q-page class="flex flex-center">
-        <q-card class="my-card no-shadow">
-          <q-card-section>
-            <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-sm">
-              <q-input style="flex-grow:2" filled type="email" v-model="email" label="Email *" lazy-rules
+      <q-page class="column flex-center">
+        <img src="https://www.riverstonetech.com/wp-content/uploads/2024/12/riverstone-tech-design-logo.png#3103"/>
+        <q-card class="no-shadow q-mt-lg" style="width:75%;border-radius: 10px;">
+          <q-card-section class="flex flex-center">
+            <!-- <div class="q-pb-md text-center text-h6 text-bold" style="width: 75%;">TurboTracker</div> -->
+            <q-form @submit="onSubmit" class="q-gutter-sm">
+              <q-input filled type="email" v-model="email" label="Email *" lazy-rules
                 :rules="[val => val && val.length > 0 || 'Please type your email id']" />
 
               <q-input filled :type="isPwd ? 'password' : 'text'" v-model="password" label="Password *" lazy-rules
@@ -18,7 +20,7 @@
                 </template>
               </q-input>
 
-              <q-btn label="Login" type="submit" color="primary" style="width: 100%;" />
+              <q-btn class="login text-bold" label="Login" type="submit" style="width: 100%;" />
             </q-form>
           </q-card-section>
         </q-card>
@@ -39,7 +41,7 @@ import axios from 'axios';
 const router = useRouter();
 
 const isPwd = ref(true)
-const email = ref("arun.r@riverstonetech.com")
+const email = ref("arun.r@riverstonetech.coms")
 const password = ref("alpha@123")
 
 async function onSubmit() {
@@ -49,7 +51,7 @@ async function onSubmit() {
       email_id: email.value,
       password: password.value
     }
-    var response = await axios.post(`http://localhost:8008/api/method/turbotracker.mobile_integ.login`, data)
+    var response = await apiClient.post(`api/method/turbotracker.mobile_integ.login`, data)
     if (response?.data?.message?.access_token) {
         response = response.data.message
         localStorage.setItem('accessToken', response.access_token);
@@ -62,22 +64,12 @@ async function onSubmit() {
         router.push('/');
         hideLoading()
     }
-    // .catch((err) => {
-      //   if (err.response?.status === 404 || err.response?.status === 401) {
-      //     Notify.create({
-      //       color: 'red-5',
-      //       textColor: 'white',
-      //       icon: 'warning',
-      //       message: `${err.response?.data?.message}`
-      //     })
-      //   }
-      //   hideLoading()
-      // });
   }
 }
-
-function onReset() {
-  email.value = null
-  password.value = null
-}
 </script>
+<style>
+.login{
+  background-color: #42C2FF;
+  color: white;
+}
+</style>

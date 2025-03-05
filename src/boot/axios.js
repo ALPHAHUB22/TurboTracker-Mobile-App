@@ -1,7 +1,7 @@
 import { boot } from 'quasar/wrappers';
 import axios from 'axios';
 import { Notify } from 'quasar'
-
+import { showLoading, hideLoading } from 'src/utils/loading.js'
 // Create an Axios instance
 const apiClient = axios.create({
   // baseURL: localStorage.getItem("siteUrl"), // Replace with your API base URL
@@ -30,14 +30,17 @@ apiClient.interceptors.request.use((config) => {
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.error('API Error:', error.response?.data || error.message);
-    Notify.create({
-      color: 'red-5',
-      textColor: 'white',
-      icon: 'warning',
-      message: `API Error:' ${error.response?.data?.exception || error.message}`
-    })
-    // return Promise.reject(error);
+    console.error('API Error:', error?.response?.data || error?.message);
+    if (error.response.status !== 401 || error.response?.data?.status === "Failure"){
+      const message = error.response?.data?.status === "Failure" ? error?.response?.data?.message : `API Error: ${error?.response?.data?.message || error?.message}`
+      hideLoading()
+      Notify.create({
+        color: 'red-5',
+        textColor: 'white',
+        icon: 'warning',
+        message: message
+      })
+    }
   }
 );
 

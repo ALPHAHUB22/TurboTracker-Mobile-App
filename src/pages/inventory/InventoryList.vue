@@ -1,35 +1,37 @@
 <template>
   <q-layout view="lHh Lpr lFf" style="background-color: #d1eff9;">
     <q-page-container>
-      <q-header style="background-color: #d1eff9;">
+      <!-- <q-header style="background-color: #d1eff9;"> -->
         <q-toolbar>
           <q-toolbar-title style="color: black">
-            TurboTracker
+            {{ filterName ? filterName : 'Inventory'}}
           </q-toolbar-title>
           <div class="q-gutter-sm">
-            <q-btn color="white" icon="add" size="11px" :to="{ name: 'InventoryLogForm' }" text-color="primary" />
+            <q-btn round style="color: white; background-color: rgb(66, 194, 255)" icon="add" size="14px" :to="{ name: 'InventoryLogForm' }" />
           </div>
         </q-toolbar>
-      </q-header>
-      <div class="q-mx-md search flex">
-        <!-- <q-icon color="black" name="search" style="size: 5px; align-self: center;height: 5.6vh;"/> -->
-        <input class="search-bar" style="flex-grow: 10" v-model="searchText" placeholder="Search">
-        </input>
-
-        <q-btn style="flex-grow: 1; align-self: center;height: 5.6vh;" dense class="filter-btn" icon="tune" @click="togglefilter()" />
+      <!-- </q-header> -->
+      <div class="q-mx-md q-mt-xs search flex">
+        <div class="input-wrapper" style="width: 100%; height: 5.7vh;">
+          <q-icon class="q-pl-sm" color="black" name="search" size="sm" />
+          <input type="text" placeholder="Search" v-model="searchText" />
+          <q-icon v-if="searchText" size="sm" name="close" @click="searchText = ''" />
+          <q-btn style="align-self: center;height: 5.5vh;border: 1px solid #42C2FF;" :style="isFilterApplied ? {color: 'white', backgroundColor: 'rgb(66, 194, 255)'} : {color: 'rgb(66, 194, 255)'}" dense class="filter-btn" icon="bi-filter" @click="togglefilter()">
+          </q-btn>
+        </div>
       </div>
-      <ListCards :filters="filteredRows" />
-      <q-dialog v-model="visible" :position="'top'">
+      <ListCards :filters="filterConditions" />
+      <q-dialog v-model="visible" :position="'top'"  @hide="onDialogClose">
         <q-card>
           <div class="q-pa-md q-gutter-sm">
-            <q-select filled label="Select Items" clearable v-model="items" use-input use-chips multiple
+            <q-select dense filled label="Select Items" clearable v-model="items" use-input use-chips multiple
               input-debounce="0" @new-value="itemCreateValue" :options="itemfilterOptions" @filter="itemFilterFn" />
-            <q-select filled label="Select Building" v-model="building" use-input input-debounce="0"
+            <q-select dense filled label="Select Building" v-model="building" use-input input-debounce="0"
               @new-value="buildingCreateValue" clearable :options="buildingfilterOptions" @filter="buildingFilterFn" />
             <q-checkbox v-model="isArchive" label="Show Archive" />
             <div class="q-gutter-xs float-right">
-              <q-btn color="primary" @click="clearFilter()" icon="filter_alt_off" />
-              <q-btn color="primary" @click="recordFilter()" icon="filter_alt" label="Filter" />
+              <q-btn dense style="color: white; background-color: rgb(66, 194, 255)" @click="recordFilter()" icon="bi-filter" label="Filter" />
+              <q-btn dense style="color: white; background-color: rgb(66, 194, 255)" @click="clearFilter()" icon="close" />
             </div>
           </div>
         </q-card>
@@ -40,17 +42,22 @@
   </q-layout>
 </template>
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, reactive, watch, computed } from 'vue'
 import ListFilter from 'src/components/inventory/ListFilter.vue';
 import Footer from 'components/Footer.vue'
 import ListCards from 'src/components/inventory/ListCards.vue';
 import { apiClient } from 'src/boot/axios';
-const visible = ref(false)
 
+const visible = ref(false)
+const props = defineProps({
+	filter: {
+		type: String
+	},
+})
 function togglefilter() {
   visible.value = !visible.value
 }
-
+const searchText = ref(null)
 const itemOptions = ref([])
 const itemfilterOptions = ref([])
 const items = ref([])
@@ -63,7 +70,8 @@ get_item_list()
 const isFilterApplied = ref(false)
 const buildingOptions = ref([])
 const buildingfilterOptions = ref([])
-const building = ref(null)
+const building = ref(props.filter?props.filter: null)
+const filterName = computed(() => building.value);
 const isArchive = ref(false)
 
 const get_building_list = async () => {
@@ -143,39 +151,78 @@ function buildingFilterFn(val, update) {
   })
 }
 
-const filters = ref([])
-const filteredRows = ref([])
-// // const filteredRows = computed(() => {
-// //   return rows.value.filter(row => row.item && row.building > 10);
-// // });
-// console.log(filteredRows.value)
+const filterConditions = reactive({
+  "filter": ref(null),
+  "searchText": ref(null)
+})
+
 function recordFilter() {
-  isFilterApplied.value = true
-  let filterConditions = []
+  let conditions = {}
+  if (items.value.length > 0 || building.value || isArchive.value){
+    isFilterApplied.value = true
+  }
+  else{
+    isFilterApplied.value = false
+  }
   if (items.value.length > 0) {
-    filterConditions.push(["item_code", ["in", items.value]])
-    // filteredRows.value = rows.value.filter(row => items.value.includes(row.item));
+    conditions.item_code = items.value
   }
   if (building.value) {
-    filterConditions.push(["building", building.value])
+    conditions.building = building.value
   }
   if (isArchive.value) {
-    filterConditions.push(["archived", isArchive.value])
+    conditions.archived = isArchive.value
   }
-  filteredRows.value = filterConditions
+  filterConditions.filter = conditions
   visible.value = false
 }
 
+const onDialogClose = () => {
+  if (!isFilterApplied.value){
+    items.value.length = []
+    building.value = null
+    isArchive.value = false
+  }
+  // You can run any function here, e.g., reset form, fetch data, etc.
+};
 const clearFilter = () => {
-  filteredRows.value = []
+  filterConditions.filter = []
   isFilterApplied.value = false
   items.value = []
+  building.value = null
   visible.value = false
 }
+if (props.filter){
+  recordFilter()
+}
+watch(
+  () => searchText.value,
+  (value) => {
+    filterConditions.searchText = value
+  }
+)
 
 </script>
 <style scoped>
-.search-bar{
-  border: none
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  border: 1px solid #42C2FF;
+  border-radius: 10px;
+  background-color: white;
+  /* padding: 8px; */
+  gap: 8px;
+}
+
+.input-wrapper i {
+  color: #42C2FF;
+  border-radius: 10px;
+}
+
+.input-wrapper input {
+  border: none;
+  outline: none;
+  flex: 1;
+  border-radius: 10px;
 }
 </style>

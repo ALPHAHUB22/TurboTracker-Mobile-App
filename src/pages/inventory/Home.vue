@@ -1,40 +1,21 @@
 <template>
   <q-page-container>
     <IntroPanel />
-    <!-- <div class="row q-px-lg justify-between q-gutter-lg q-mt-xs">
-      <q-card class="col-3 row column justify-center items-center">
-        <q-icon class="add-icon" size="lg" name="add" />
-      </q-card>
-      <q-card class="col-3 column q-pl-sm">
-        <q-icon class="col icon" size="sm" name="bi-diagram-2" />
-        <div class="text-caption q-ml-xs q-mt-xs">
-          <div ><strong>566</strong></div>
-          <div style="font-size:10px">Items</div>
-        </div>
-      </q-card>
-      <q-card class="col-3 column q-pl-sm">
-        <q-icon class="col icon" size="sm" name="domain" />
-        <div class="text-caption q-ml-xs q-mt-xs">
-          <div ><strong>566</strong></div>
-          <div style="font-size:10px">Buildings</div>
-        </div>
-      </q-card>
-    </div> -->
     <div class="grid-container">
-      <q-card class="row column justify-center items-center" style="flex-grow: 1">
+      <q-card v-ripple class="row column justify-center items-center" clickable @click="$router.push({ name: 'InventoryLogForm' });" style="flex-grow: 1">
         <q-icon class="add-icon" size="lg" name="add" />
       </q-card>
-      <q-card class="col-3 column q-pl-sm"  style="flex-grow: 1">
+      <q-card v-ripple class="col-3 column q-pl-sm" style="flex-grow: 1">
         <q-icon class="col icon" size="sm" name="bi-diagram-2" />
         <div class="text-caption q-ml-xs q-mt-xs">
-          <div ><strong>566</strong></div>
+          <div><strong>{{itemCount}}</strong></div>
           <div style="font-size:10px">Items</div>
         </div>
       </q-card>
-      <q-card class="col-3 column q-pl-sm" style="flex-grow: 1">
+      <q-card v-ripple class="col-3 column q-pl-sm" style="flex-grow: 1">
         <q-icon class="col icon" size="sm" name="domain" />
         <div class="text-caption q-ml-xs q-mt-xs">
-          <div ><strong>566</strong></div>
+          <div><strong>{{buildingCount}}</strong></div>
           <div style="font-size:10px">Buildings</div>
         </div>
       </q-card>
@@ -47,34 +28,49 @@
   </q-page-container>
 </template>
 <script setup>
+import {ref} from 'vue'
 import Expansion from 'components/Expansion.vue'
 import Card from 'components/Card.vue'
 import IntroPanel from 'components/IntroPanel.vue'
 import QuickLinks from 'components/QuickLinks.vue'
 import BuildingQuickLinks from 'components/BuildingQuickLinks.vue'
-import { buildingList } from 'src/data/inventory.js'
+import { buildingList, dashInfoList } from 'src/data/inventory.js'
 
-console.log(buildingList[0])
-const quickLinksSolo = [
-  {
-    title: "+ Add Item",
-    route: "InventoryLogForm",
-  }
-]
+
+const itemCount = ref(0)
+const buildingCount = ref(0)
+
+function animateValue(obj, start, end, duration) {
+  let startTimestamp = null;
+  const step = (timestamp) => {
+    if (!startTimestamp) startTimestamp = timestamp;
+    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+    obj.value = Math.floor(progress * (end - start) + start);
+    if (progress < 1) {
+      window.requestAnimationFrame(step);
+    }
+  };
+  window.requestAnimationFrame(step);
+}
+
+animateValue(itemCount, 0, dashInfoList.item, 500);
+animateValue(buildingCount, 0, dashInfoList.building, 500);
+
 </script>
 <style lang="css">
 .add-icon {
   border-radius: 7px;
   padding: 5px;
   color: #42C2FF;
-  background-color: #d1eff9;
+  background-color: #e6f9ff;
 }
+
 .icon {
   border-radius: 7px;
   margin-top: 10px;
   padding: 5px;
   color: #42C2FF;
-  background-color: #d1eff9;
+  background-color: #e6f9ff;
 }
 
 .column {
@@ -91,6 +87,11 @@ const quickLinksSolo = [
   margin-inline: 25px;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px; /* Optional spacing */
+  gap: 10px;
+  /* Optional spacing */
+}
+
+.grid-container>.column {
+  border: 1px solid #42C2FF;
 }
 </style>

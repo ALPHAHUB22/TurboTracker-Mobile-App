@@ -1,42 +1,64 @@
 <template>
-  <div class="col-12 column items-center">
+  <!-- <div class="col-12 column items-center">
     <q-btn @click="captureImage" color="green-7" style="width: 100%;">
       <q-icon name="bi-paperclip" size="xs" />Attachments
       <q-badge v-if="attachment_len.value" color="red" floating left>{{ attachment_len }}</q-badge></q-btn>
+  </div> -->
+  <div class="col-12 row items-center q-gutter-x-sm q-my-md">
+    <div class="text-h6">Attachments</div>
+    <q-badge v-if="attachment_len.value" style="background-color: #42C2FF;">{{ attachment_len }}</q-badge>
   </div>
-  <div class="col-12 row q-gutter-md q-mt-md justify-around">
-    <div v-for="image in attachments" class="col-3">
-      <q-icon name="close" class="h-5 w-5 text-gray-700" style="float:right"
-        @click="() => confirmDeleteAttachment(image)" />
-      <q-img @click="() => { isPreview = true; previewAttachment=image }" ratio="1" :src="image.url" />
-    </div>
+  <div class="col-12" style="display: flex; flex-wrap: wrap; padding-left: 1vh;">
+    <q-img class="attachment" v-for="image in attachments"
+      @click="() => { isPreview = true; previewAttachment = image }" :src="image.url" />
+    <q-card class="row column justify-center items-center attachment" @click="captureImage"
+      style="border: 1px dashed ;background-color: #e6f9ff;">
+      <q-icon class="add-icon" size="lg" name="add" />
+    </q-card>
   </div>
-  <FilePreview v-if="isPreview" v-model:isPreview="isPreview" v-model:previewAttachment="previewAttachment"  />
+  <!-- <FilePreview v-if="isPreview" v-model:isPreview="isPreview" v-model:previewAttachment="previewAttachment" v-model:attachments="props.attachments" /> -->
+  <q-dialog v-model="isPreview" :backdrop-filter="'blur(4px) saturate(150%)'">
+    <q-card>
+      <img :src="previewAttachment.download_url">
+      <q-card-actions align="right">
+        <q-btn class="text-caption" style="border: 1px solid red;" :loading="delLoading"
+          @click="() => confirmDeleteAttachment(previewAttachment)">
+          <q-icon color="red" size="20px" name="bi-trash"></q-icon>
+        </q-btn>
+        <q-btn class="text-caption download-btn" :loading="downloadLoading"
+          @click="downloadFile(previewAttachment.download_url)">
+          <q-icon size="20px" name="bi-download"></q-icon>
+        </q-btn>
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
   <q-dialog v-model="deleteDialog" :backdrop-filter="'hue-rotate(120deg)'">
     <q-card>
       <q-card-section class="row items-center q-pb-none text-bold">
-          Delete Attachment
-        </q-card-section>
-        <q-card-section class="row items-center">
-          <!-- <q-avatar icon="signal_wifi_off" color="primary" text-color="white" /> -->
-          <p class="q-ml-sm text-caption">
-            Are you sure you want to delete the attachment
-            <span class="text-bold">{{ delDialogInfo.file_name }}</span>
-            ?
-          </p>
-        </q-card-section>
+        Delete Attachment
+      </q-card-section>
+      <q-card-section class="row items-center">
+        <!-- <q-avatar icon="signal_wifi_off" color="primary" text-color="white" /> -->
+        <p class="q-ml-sm text-caption">
+          Are you sure you want to delete the attachment
+          <span class="text-bold">{{ delDialogInfo.file_name }}</span>
+          ?
+        </p>
+      </q-card-section>
 
-        <q-card-actions align="right">
-          <q-btn color="primary" class="text-caption" v-close-popup>Cancel</q-btn>
-          <q-btn class="text-caption" style="border: 1px solid red;" :loading="delLoading" @click="deleteAttachment(delDialogInfo)" >
-            <q-icon color="red" size="20px" name="bi-trash"></q-icon>
-          </q-btn>
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+      <q-card-actions align="right">
+        <q-btn class="text-caption cancel-btn" v-close-popup>Cancel</q-btn>
+        <q-btn class="text-caption confirm-del-btn" :loading="confirmDelLoading"
+          @click="deleteAttachment(delDialogInfo)">
+          <q-icon size="20px" name="bi-trash"></q-icon>
+        </q-btn>
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+
 </template>
 <script setup>
-import {ref, watch} from 'vue'
+import { ref, watch } from 'vue'
 import { apiClient } from 'src/boot/axios';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera'
 import FilePreview from 'components/inventory/FilePreview.vue'
@@ -44,9 +66,6 @@ import FilePreview from 'components/inventory/FilePreview.vue'
 const props = defineProps(['attachments']);
 const emit = defineEmits(['update:attachments']);
 const attachment_len = ref(props.attachments.length)
-const deleteDialog = ref(false)
-const delDialogInfo = ref({})
-const delLoading = ref(false)
 const isPreview = ref(false)
 const previewAttachment = ref({})
 
@@ -61,7 +80,6 @@ const captureImage = async () => {
     const attachment = await upload_attachments(base64Content, fileName)
 
     props.attachments.push(attachment)
-    console.log(props.attachments)
   } catch (error) {
     console.error('Camera error:', error)
   }
@@ -76,7 +94,7 @@ const extractBase64 = (dataUrl) => {
   return { base64Content, fileName };
 };
 
-async function upload_attachments(content, fileName){
+async function upload_attachments(content, fileName) {
   const data = JSON.stringify({
     content: content,
     filename: fileName
@@ -85,27 +103,88 @@ async function upload_attachments(content, fileName){
   return response.data.message
 }
 
-function confirmDeleteAttachment(image){
-  deleteDialog.value = true
-  delDialogInfo.value = image
-}
-
-async function deleteAttachment(image){
-  delLoading.value = true
-  const response = await apiClient.post('/api/method/turbotracker.mobile_integ.inventory.delete_attachment', {"name": image.id});
-  const updatedAttachments = props.attachments.filter(item => item.id !== image.id);
-  emit('update:attachments', updatedAttachments);
-  console.log(props.attachments)
-  delLoading.value = false
-  deleteDialog.value = false
-}
-
 watch(
   () => props.attachments,
   (value) => {
     attachment_len.value = ref(value.length)
   },
-  {deep:true}
+  { deep: true }
+)
+
+const downloadLoading = ref(false)
+const deleteDialog = ref(false)
+const delDialogInfo = ref({})
+const delLoading = ref(false)
+const confirmDelLoading = ref(false)
+function cancelPreviewDialog() {
+  isPreview.value = false
+}
+
+function cancelDeleteDialog() {
+  deleteDialog.value = false
+}
+
+const downloadFile = (url) => {
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = ""; // Browser will automatically determine filename
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
+
+function confirmDeleteAttachment(image) {
+  deleteDialog.value = true
+  delDialogInfo.value = image
+}
+
+async function deleteAttachment(image) {
+  confirmDelLoading.value = true
+  const response = await apiClient.post('/api/method/turbotracker.mobile_integ.inventory.delete_attachment', { "name": image.id });
+  const updatedAttachments = props.attachments.filter(item => item.id !== image.id);
+  emit('update:attachments', updatedAttachments);
+  confirmDelLoading.value = false
+  cancelPreviewDialog()
+  cancelDeleteDialog()
+}
+
+watch(
+  () => isPreview.value,
+  (value) => {
+    if (!value) {
+      cancelPreviewDialog()
+      cancelDeleteDialog()
+    }
+  }
 )
 
 </script>
+<style>
+.attachment {
+  margin: 4px;
+  width: 75px;
+  border-radius: 10px;
+  height: 9vh;
+}
+
+.add-icon {
+  /* padding: 5px; */
+  color: #42C2FF;
+}
+
+.download-btn {
+  background-color: #42C2FF;
+  color: white;
+}
+
+.cancel-btn {
+  border: 1px solid #42C2FF;
+  background-color: white;
+  color: #42C2FF;
+}
+
+.confirm-del-btn {
+  color: white;
+  background-color: red;
+}
+</style>
