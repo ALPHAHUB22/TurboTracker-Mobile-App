@@ -1,35 +1,27 @@
-import { markRaw } from "vue"
 import { apiClient } from 'src/boot/axios';
 
-// const weekData = response.data.message
 
-async function get_building(){
+export async function getBuildings(){
   const params = {
     "limit": 5
   }
   const response = await apiClient.get('/api/method/turbotracker.api.get_warehouse_info', { params })
-  let quicklinks = []
-  console.log(response, "response")
+  let buildings = []
   const data = response.data.message
   for(let i=0; i<data.length; i++){
-    let t = {
-      icon: "warehouse",
+    let building = {
       title: data[i].title,
       value: data[i].value,
       route: "InventoryLogBuildingListView",
     }
-    quicklinks.push(t)
+    buildings.push(building)
   }
-  quicklinks = JSON.parse(JSON.stringify(quicklinks))
-  return quicklinks
+  return buildings
 }
 
-async function dashInfo() {
+export async function getDashInfo() {
   const response = await apiClient.get('/api/method/turbotracker.mobile_integ.inventory.dash_info')
   let dashInfoList = []
   dashInfoList = response.data.message
   return dashInfoList
 }
-
-export const buildingList = await get_building()
-export const dashInfoList = await dashInfo()

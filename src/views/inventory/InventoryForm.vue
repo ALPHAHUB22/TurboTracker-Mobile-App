@@ -439,7 +439,7 @@ async function unArchiveLog(){
 .q-select{
   /* background-color: white; */
 }
-.q-layout{
+/* .q-layout{
   background: linear-gradient(to bottom, rgb(247, 251, 253) , rgb(239, 251, 255))
-}
+} */
 </style>

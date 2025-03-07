@@ -67,6 +67,11 @@
   dependencies:
     tslib "^2.1.0"
 
+"@capacitor/preferences@^7.0.0":
+  version "7.0.0"
+  resolved "https://registry.npmjs.org/@capacitor/preferences/-/preferences-7.0.0.tgz"
+  integrity sha512-crlTtTIWcdlLfQULJ9ZiCPpvpm51WoZ8CIVG3+XSJGyavjD4bscHP15U24ya5SjpYmI44bGY9lvhvcSCfB5+AA==
+
 "@esbuild/linux-x64@0.24.0":
   version "0.24.0"
   resolved "https://registry.npmjs.org/@esbuild/linux-x64/-/linux-x64-0.24.0.tgz"
@@ -293,6 +298,11 @@
   version "4.28.1"
   resolved "https://registry.npmjs.org/@rollup/rollup-linux-x64-gnu/-/rollup-linux-x64-gnu-4.28.1.tgz"
   integrity sha512-fzgeABz7rrAlKYB0y2kSEiURrI0691CSL0+KXwKwhxvj92VULEDQLpBYLHpF49MSiPG4sq5CK3qHMnb9tlCjBw==
+
+"@rollup/rollup-linux-x64-musl@4.28.1":
+  version "4.28.1"
+  resolved "https://registry.npmjs.org/@rollup/rollup-linux-x64-musl/-/rollup-linux-x64-musl-4.28.1.tgz"
+  integrity sha512-xQTDVzSGiMlSshpJCtudbWyRfLaNiVPXt1WgdWTwWz9n0U12cI2ZVtWe/Jgwyv/6wjL7b66uu61Vg0POWVfz4g==
 
 "@types/body-parser@*":
   version "1.19.5"

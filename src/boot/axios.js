@@ -2,10 +2,11 @@ import { boot } from 'quasar/wrappers';
 import axios from 'axios';
 import { Notify } from 'quasar'
 import { showLoading, hideLoading } from 'src/utils/loading.js'
+import { Preferences } from '@capacitor/preferences';
 // Create an Axios instance
 const apiClient = axios.create({
   // baseURL: localStorage.getItem("siteUrl"), // Replace with your API base URL
-  baseURL: "http://localhost:8008/", // Replace with your API base URL
+  baseURL: "http://10.0.0.91:8008/", // Replace with your API base URL
   timeout: 10000, // Set a timeout
   headers: {
     'Content-Type': 'application/json',
@@ -13,14 +14,12 @@ const apiClient = axios.create({
 });
 
 // Optionally set up request interceptors
-apiClient.interceptors.request.use((config) => {
-  // localStorage.removeItem('accessToken')
-  const token = localStorage.getItem('accessToken'); // Retrieve token dynamically
-  // console.log(["ACCESS_TOKEN", token])
-  const url = localStorage.getItem("siteUrl")
-  if (token && url) {
-    config.headers.Authorization = `Bearer ${token}`;
+apiClient.interceptors.request.use(async(config) => {
+  const token = await Preferences.get({ key: 'accessToken' });
+  if (token.value !== null) {
+    config.headers.Authorization = `Bearer ${token.value}`;
   }
+  // console.log(token.value, config.headers)
   return config;
 }, (error) => {
   return Promise.reject(error);

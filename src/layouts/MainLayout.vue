@@ -38,30 +38,34 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import Header from 'components/Header.vue'
 import { useRouter } from 'vue-router'
 import Footer from 'components/Footer.vue'
 import { apiClient } from 'src/boot/axios';
 import { showLoading, hideLoading } from 'src/utils/loading.js'
+import { Preferences } from '@capacitor/preferences';
 
 const router = useRouter();
 const isLogoutDialog = ref(false)
 const logoutLoading = ref(false)
-
-const userInfo = reactive(JSON.parse(localStorage.getItem('userInfo')))
-const token = localStorage.getItem('accessToken')
+// const user_value = await Preferences.get({ key: 'userInfo' })
+const userInfo = ref({})
+// console.log(userInfo.email)
+// const token_value = await Preferences.get({ key: 'accessToken' })
+const token = ref(null)
+// console.log(token)
 
 async function logout() {
     showLoading()
     const data = {
-      email_id: userInfo.email,
-      access_token: token
+      email_id: userInfo.value.email,
+      access_token: token.value
     }
     var response = await apiClient.post(`api/method/turbotracker.mobile_integ.logout`, data)
     if (response?.data?.message?.status === "Success") {
-        localStorage.removeItem("userInfo")
-        localStorage.removeItem("accessToken")
+        await Preferences.remove({ key: 'userInfo' });
+        await Preferences.remove({ key: 'accessToken' });
         router.push('/login');
         hideLoading()
     }
@@ -78,6 +82,14 @@ async function logout() {
       // });
 }
 
+
+onMounted(async () => {
+  const user_value = await Preferences.get({ key: 'userInfo' })
+  userInfo.value = JSON.parse(user_value.value)
+  console.log(userInfo.value.email)
+  const token_value = await Preferences.get({ key: 'accessToken' })
+  token.value = token_value.value
+});
 </script>
 <style scoped>
 .top-sheet{

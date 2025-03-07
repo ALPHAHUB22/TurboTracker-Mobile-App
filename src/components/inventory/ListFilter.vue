@@ -1,22 +1,17 @@
 <template>
   <q-dialog v-model="props.visible" :position="'bottom'">
-      {{ props.visible }}
     <q-card style="width: 350px">
-        <div class="q-pa-md row q-gutter-sm">
-          <!-- <div class="col-4" style="width: 50%"> -->
-          <q-select class="col-4" style="width: 47%" filled label="Select Items" clearable v-model="items" use-input
-            use-chips multiple input-debounce="0" @new-value="itemCreateValue" :options="itemfilterOptions"
-            @filter="itemFilterFn" />
-          <!-- </div> -->
-          <!-- <div class="col-4" style="width: 47%"> -->
-          <q-select class="col-4" style="width: 47%" filled label="Select Building" v-model="building" use-input
-            use-chips input-debounce="0" @new-value="buildingCreateValue" :options="buildingfilterOptions"
-            @filter="buildingFilterFn" />
-          <q-checkbox v-model="isArchive" label="Show Archive" />
-          <!-- </div> -->
-        </div>
+      <div class="q-pa-md row q-gutter-sm">
+        <q-select class="col-4" style="width: 47%" filled label="Select Items" clearable v-model="items" use-input
+          use-chips multiple input-debounce="0" @new-value="itemCreateValue" :options="itemfilterOptions"
+          @filter="itemFilterFn" />
+        <q-select class="col-4" style="width: 47%" filled label="Select Building" v-model="building" use-input use-chips
+          input-debounce="0" @new-value="buildingCreateValue" :options="buildingfilterOptions"
+          @filter="buildingFilterFn" />
+        <q-checkbox v-model="isArchive" label="Show Archive" />
+      </div>
     </q-card>
-    </q-dialog>
+  </q-dialog>
 </template>
 <script setup>
 import { ref } from 'vue'

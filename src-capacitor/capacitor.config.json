@@ -1,5 +1,27 @@
 {
   "appId": "org.capacitor.quasar.app",
   "appName": "TurboTracker",
-  "webDir": "www"
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "android": {
+    "allowMixedContent": true
+  },
+  "server": {
+    "clearText": true,
+    "allowNavigation": [
+      "10.0.0.91",
+      "http://10.0.0.91:8008"
+    ]
+  },
+  "plugins": {
+    "Camera": {
+      "permissions": [
+        "camera",
+        "photos"
+      ]
+    },
+    "Preferences": {
+      "enabled": true
+    }
+  }
 }

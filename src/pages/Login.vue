@@ -32,10 +32,11 @@
 <script setup>
 
 import { Notify } from 'quasar'
-import { ref, provide, computed } from 'vue'
+import { ref, provide, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router';
 import { showLoading, hideLoading } from 'src/utils/loading.js'
 import { apiClient } from 'src/boot/axios';
+import { Preferences } from '@capacitor/preferences';
 // import { computedAsync } from "@vueuse/core";
 import axios from 'axios';
 const router = useRouter();
@@ -43,7 +44,7 @@ const router = useRouter();
 const isPwd = ref(true)
 const email = ref("arun.r@riverstonetech.com")
 const password = ref("alpha@123")
-
+const token = ref(null)
 async function onSubmit() {
   if (email.value && password.value) {
     showLoading()
@@ -54,18 +55,28 @@ async function onSubmit() {
     var response = await apiClient.post(`api/method/turbotracker.mobile_integ.login`, data)
     if (response?.data?.message?.access_token) {
         response = response.data.message
-        localStorage.setItem('accessToken', response.access_token);
+        await Preferences.set({
+          key: 'accessToken',
+          value: response.access_token
+        });
         const userInfo = {
           email: email.value,
           name: response.full_name,
           employee_id: response.employee_id
         }
-        localStorage.setItem('userInfo', JSON.stringify(userInfo));
+        await Preferences.set({
+          key: 'userInfo',
+          value: JSON.stringify(userInfo)
+        });
         router.push('/');
         hideLoading()
     }
   }
 }
+
+onMounted(async () => {
+    token.value = await Preferences.get({ key: 'accessToken' })
+});
 </script>
 <style>
 .login{
