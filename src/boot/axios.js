@@ -28,7 +28,11 @@ apiClient.interceptors.request.use(async(config) => {
 // Optionally set up response interceptors
 apiClient.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async(error) => {
+    const token = await Preferences.get({ key: 'accessToken' });
+    if (token.value !== null && error.response.status === 401){
+      await Preferences.remove({ key: 'accessToken' });
+    }
     console.error('API Error:', error?.response?.data || error?.message);
     if (error.response.status !== 401 || error.response?.data?.status === "Failure"){
       const message = error.response?.data?.status === "Failure" ? error?.response?.data?.message : `API Error: ${error?.response?.data?.message || error?.message}`

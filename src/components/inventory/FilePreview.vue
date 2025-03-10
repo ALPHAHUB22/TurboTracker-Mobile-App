@@ -39,6 +39,7 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { apiClient } from 'src/boot/axios';
+import { apiRequest } from 'src/boot/http.js';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera'
 
 const props = defineProps(['isPreview', 'previewAttachment', 'attachments']);
@@ -68,7 +69,7 @@ function confirmDeleteAttachment(image){
 
 async function deleteAttachment(image){
   delLoading.value = true
-  const response = await apiClient.post('/api/method/turbotracker.mobile_integ.inventory.delete_attachment', {"name": image.id});
+  const response = await apiRequest.post('/api/method/turbotracker.mobile_integ.inventory.delete_attachment', {"name": image.id});
   const updatedAttachments = props.attachments.value.filter(item => item.id !== image.id);
   // emit('update:attachments', updatedAttachments);
   delLoading.value = false

@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view="lHh Lpr lFf" class="layout">
     <!-- <q-header style="background-color: white;color:black" class="no-shadow" elevated> -->
       <q-toolbar style="position: fixed; z-index: 1;background-color: rgb(239, 251, 255);color:black">
         <q-btn flat dense icon="keyboard_arrow_left" aria-label="Menu" @click="$router.go(-1)" />
@@ -85,7 +85,7 @@
 <script setup>
 import { ref, reactive, onMounted, watch, computed, nextTick } from 'vue'
 import { apiClient } from 'src/boot/axios';
-import { Camera, CameraResultType, CameraSource } from '@capacitor/camera'
+import { apiRequest } from 'src/boot/http.js';
 import { useRouter } from 'vue-router';
 import { Notify } from 'quasar';
 import FileUploader from 'components/inventory/FileUploader.vue'
@@ -163,7 +163,7 @@ async function onSubmit(){
   try {
     localStorage.setItem("building", formData.building)
     localStorage.setItem("floor", formData.floor)
-    const response = await apiClient.post('/api/method/turbotracker.mobile_integ.inventory.create_inventory_log', formData);
+    const response = await apiRequest.post('/api/method/turbotracker.mobile_integ.inventory.create_inventory_log', formData);
     Notify.create({
       color: 'green-5',
       textColor: 'white',
@@ -185,7 +185,7 @@ async function onSubmit(){
 async function onUpdate(){
   try {
     formData.name = inventoryLogId.value
-    const response = await apiClient.post('/api/method/turbotracker.mobile_integ.inventory.update_inventory_log', formData);
+    const response = await apiRequest.post('/api/method/turbotracker.mobile_integ.inventory.update_inventory_log', formData);
     Notify.create({
       color: 'green-5',
       textColor: 'white',
@@ -205,8 +205,8 @@ async function onUpdate(){
 }
 
 async function fetchData(endpoint, entity) {
-  const response = await apiClient.get(endpoint);
-  entity.options = response.data.data.map(row => row.name);
+  const response = await apiRequest.get(endpoint);
+  entity.options = response.data.map(row => row.name);
   entity.filterOptions = entity.options;
 }
 
@@ -338,8 +338,9 @@ async function getInventoryLog(){
     const params = {
       "log_id": props.inventoryLogId
     }
-    const response = await apiClient.get('/api/method/turbotracker.mobile_integ.inventory.get_inventory_log', { params })
-    const data = response.data.message
+    const response = await apiRequest.get('/api/method/turbotracker.mobile_integ.inventory.get_inventory_log', params)
+    const data = response.message
+    console.log(response)
     isArchive.value = data.archived
     attachments.value = data.attachments
     updateFormData(data)
@@ -351,8 +352,9 @@ async function getInventoryData(item_code, floor){
       "item_code": item_code,
       "floor": floor
     }
-    const response = await apiClient.get('/api/method/turbotracker.api.get_item_stock', { params })
-    const data = response.data.message
+    const response = await apiRequest.get('/api/method/turbotracker.api.get_item_stock', params)
+    const data = response.message
+    console.log(response)
     updateFormData(data)
     inventoryLogId.value = data.name
 }
@@ -411,7 +413,7 @@ const itemfilterFn = (val, update) => {
 
 async function unArchiveLog(){
   try {
-    const response = await apiClient.post('/api/method/turbotracker.mobile_integ.inventory.archive_log', {"name": inventoryLogId.value, "archive_status": false});
+    const response = await apiRequest.post('/api/method/turbotracker.mobile_integ.inventory.archive_log', {"name": inventoryLogId.value, "archive_status": false});
     Notify.create({
       color: 'green-5',
       textColor: 'white',
@@ -439,7 +441,7 @@ async function unArchiveLog(){
 .q-select{
   /* background-color: white; */
 }
-/* .q-layout{
+.layout{
   background: linear-gradient(to bottom, rgb(247, 251, 253) , rgb(239, 251, 255))
-} */
+}
 </style>

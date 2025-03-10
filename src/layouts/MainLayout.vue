@@ -43,18 +43,15 @@ import Header from 'components/Header.vue'
 import { useRouter } from 'vue-router'
 import Footer from 'components/Footer.vue'
 import { apiClient } from 'src/boot/axios';
+import { apiRequest } from 'src/boot/http.js';
 import { showLoading, hideLoading } from 'src/utils/loading.js'
 import { Preferences } from '@capacitor/preferences';
 
 const router = useRouter();
 const isLogoutDialog = ref(false)
 const logoutLoading = ref(false)
-// const user_value = await Preferences.get({ key: 'userInfo' })
 const userInfo = ref({})
-// console.log(userInfo.email)
-// const token_value = await Preferences.get({ key: 'accessToken' })
 const token = ref(null)
-// console.log(token)
 
 async function logout() {
     showLoading()
@@ -62,8 +59,8 @@ async function logout() {
       email_id: userInfo.value.email,
       access_token: token.value
     }
-    var response = await apiClient.post(`api/method/turbotracker.mobile_integ.logout`, data)
-    if (response?.data?.message?.status === "Success") {
+    var response = await apiRequest.post(`api/method/turbotracker.mobile_integ.logout`, data)
+    if (response?.message?.status === "Success") {
         await Preferences.remove({ key: 'userInfo' });
         await Preferences.remove({ key: 'accessToken' });
         router.push('/login');

@@ -62,6 +62,7 @@ import { ref, watch } from 'vue'
 import { apiClient } from 'src/boot/axios';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera'
 import FilePreview from 'components/inventory/FilePreview.vue'
+import { apiRequest } from 'src/boot/http.js';
 
 const props = defineProps(['attachments']);
 const emit = defineEmits(['update:attachments']);
@@ -99,8 +100,8 @@ async function upload_attachments(content, fileName) {
     content: content,
     filename: fileName
   })
-  const response = await apiClient.post('/api/method/turbotracker.api.upload_base64_file', data);
-  return response.data.message
+  const response = await apiRequest.post('/api/method/turbotracker.api.upload_base64_file', data);
+  return response.message
 }
 
 watch(
@@ -140,7 +141,7 @@ function confirmDeleteAttachment(image) {
 
 async function deleteAttachment(image) {
   confirmDelLoading.value = true
-  const response = await apiClient.post('/api/method/turbotracker.mobile_integ.inventory.delete_attachment', { "name": image.id });
+  const response = await apiRequest.post('/api/method/turbotracker.mobile_integ.inventory.delete_attachment', { "name": image.id });
   const updatedAttachments = props.attachments.filter(item => item.id !== image.id);
   emit('update:attachments', updatedAttachments);
   confirmDelLoading.value = false

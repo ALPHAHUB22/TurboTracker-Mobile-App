@@ -36,6 +36,7 @@ import { ref, provide, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router';
 import { showLoading, hideLoading } from 'src/utils/loading.js'
 import { apiClient } from 'src/boot/axios';
+import { apiRequest } from 'src/boot/http.js';
 import { Preferences } from '@capacitor/preferences';
 // import { computedAsync } from "@vueuse/core";
 import axios from 'axios';
@@ -52,9 +53,9 @@ async function onSubmit() {
       email_id: email.value,
       password: password.value
     }
-    var response = await apiClient.post(`api/method/turbotracker.mobile_integ.login`, data)
-    if (response?.data?.message?.access_token) {
-        response = response.data.message
+    var response = await apiRequest.post(`api/method/turbotracker.mobile_integ.login`, data)
+    if (response?.message?.access_token) {
+        response = response.message
         await Preferences.set({
           key: 'accessToken',
           value: response.access_token

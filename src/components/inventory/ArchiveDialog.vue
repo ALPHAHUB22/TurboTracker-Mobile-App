@@ -27,6 +27,8 @@ import {ref, watch} from 'vue'
 import { useRouter } from 'vue-router';
 import { Notify } from 'quasar';
 import { apiClient } from 'src/boot/axios';
+import { apiRequest } from 'src/boot/http.js';
+
 const router = useRouter();
 
 const props = defineProps(['isArchiveDialog',"id"]);
@@ -34,7 +36,7 @@ const emit = defineEmits(['update:isArchiveDialog', "isArchive"]);
 const isArchiveDialog = ref(props.isArchiveDialog)
 async function archiveLog(){
   try {
-    const response = await apiClient.post('/api/method/turbotracker.mobile_integ.inventory.archive_log', {"name": props.id, "archive_status": true});
+    const response = await apiRequest.post('/api/method/turbotracker.mobile_integ.inventory.archive_log', {"name": props.id, "archive_status": true});
     Notify.create({
       color: 'green-5',
       textColor: 'white',

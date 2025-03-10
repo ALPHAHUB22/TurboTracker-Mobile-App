@@ -22,6 +22,9 @@
     },
     "Preferences": {
       "enabled": true
+    },
+    "CapacitorHttp": {
+      "enabled": true
     }
   }
 }

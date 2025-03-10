@@ -28,8 +28,8 @@
                   <div class="row q-py-xs">
                     <div class="col-2 q-px-xs" style="padding-bottom: 3px;">
                       <!-- {{ items }} -->
-                      <q-img :src="items.row.image" class="q-ml-xs"
-                        style="border-radius: 10px;" width="100%" height="50px" />
+                      <q-img :src="items.row.image" class="q-ml-xs" style="border-radius: 10px;" width="100%"
+                        height="50px" />
                     </div>
                     <div class="col-10" style="border-radius: 10px;"
                       :style="items.selected ? { color: 'white', backgroundColor: 'rgb(66, 194, 255)' } : { color: 'black', backgroundColor: 'white' }">
@@ -49,7 +49,8 @@
             </transition>
           </template>
           <template v-slot:no-data="{ icon, message, filter }">
-            <div class="q-mt-xl q-pt-xl full-width row flex-center text-black q-gutter-sm text-subtitle1" style="margin-top: 24vh;">
+            <div class="q-mt-xl q-pt-xl full-width row flex-center text-black q-gutter-sm text-subtitle1"
+              style="margin-top: 24vh;">
               <q-icon size="2em" name="sentiment_dissatisfied" />
               <span>
                 {{ message }}
@@ -148,6 +149,7 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { apiClient } from 'src/boot/axios';
+import { apiRequest } from 'src/boot/http.js';
 
 const len = ref("")
 // const allSelected = ref(false)
@@ -168,7 +170,7 @@ function refresh(done) {
 const rows = ref([])
 // const rows = ref([])
 const filter = ref('')
-const filters = ref(props.filters? props.filters : [])
+const filters = ref(props.filters ? props.filters : [])
 const selected = ref([])
 const isDialog = ref(false)
 const dialogRow = ref({})
@@ -191,18 +193,14 @@ const pagination = ref({
 
 const get_inventory_list = async () => {
   const limit_start = (pagination.value.page - 1) * pagination.value.rowsPerPage
-  const response = await apiClient.get('/api/method/turbotracker.api.get',
-    {
-      params: {
-        limit_start: limit_start,
-        page_length: rowsPerPage,
-        filters: encodeURIComponent(JSON.stringify(filters.value))
-      }
-    }
-  )
-  console.log(response)
-  rows.value = response.data.message[0]
-  totalRecords.value = response.data.message[1]
+  const params = {
+    limit_start: limit_start,
+    page_length: rowsPerPage,
+    filters: encodeURIComponent(JSON.stringify(filters.value))
+  }
+  const response = await apiRequest.get('/api/method/turbotracker.api.get', params)
+  rows.value = response.message[0]
+  totalRecords.value = response.message[1]
   pagination.value.totalPageNumber = Math.ceil(totalRecords.value / rowsPerPage);
 };
 

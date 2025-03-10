@@ -47,6 +47,7 @@ import ListFilter from 'src/components/inventory/ListFilter.vue';
 import Footer from 'components/Footer.vue'
 import ListCards from 'src/components/inventory/ListCards.vue';
 import { apiClient } from 'src/boot/axios';
+import { apiRequest } from 'src/boot/http.js';
 
 const visible = ref(false)
 const props = defineProps({
@@ -62,8 +63,8 @@ const itemOptions = ref([])
 const itemfilterOptions = ref([])
 const items = ref([])
 const get_item_list = async () => {
-  const response = await apiClient.get('/api/resource/Item?limit_start=0&limit_page_length=1000')
-  itemOptions.value = response.data.data.map(row => row.name)
+  const response = await apiRequest.get('/api/resource/Item?limit_start=0&limit_page_length=1000')
+  itemOptions.value = response.data.map(row => row.name)
   itemfilterOptions.value = itemOptions.value
 }
 get_item_list()
@@ -75,8 +76,8 @@ const filterName = computed(() => building.value);
 const isArchive = ref(false)
 
 const get_building_list = async () => {
-  const response = await apiClient.get('/api/resource/Warehouse?filters=[["custom_is_building", "=", 1]]&limit_start=0&limit_page_length=1000')
-  buildingOptions.value = response.data.data.map(row => row.name)
+  const response = await apiRequest.get('/api/resource/Warehouse?filters=[["custom_is_building", "=", 1]]&limit_start=0&limit_page_length=1000')
+  buildingOptions.value = response.data.map(row => row.name)
   buildingfilterOptions.value = buildingOptions.value
 }
 get_building_list()
