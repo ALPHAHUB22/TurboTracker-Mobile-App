@@ -67,7 +67,7 @@
               @filter="(val, update) => filterFn(uom, val, update)" clearable :readonly="isReadonly"
               :rules="[ val => val && val.length > 0 || 'Please choose the UOM']"/>
             <q-input dense class="col-12" filled label="Descrpition" v-model="descrption" autogrow/>
-            <FileUploader v-model:attachments="attachments" />
+            <FileUploader v-model:attachments="attachments" :id="props.inventoryLogId" />
             <ArchiveDialog v-if="isArchiveDialog" v-model:isArchiveDialog="isArchiveDialog" v-model:isArchive="isArchive" :id="props.inventoryLogId"/>
           </div>
 
@@ -88,8 +88,8 @@ import { apiClient } from 'src/boot/axios';
 import { apiRequest } from 'src/boot/http.js';
 import { useRouter } from 'vue-router';
 import { Notify } from 'quasar';
-import FileUploader from 'components/inventory/FileUploader.vue'
-import ArchiveDialog from 'components/inventory/ArchiveDialog.vue'
+import FileUploader from 'src/components/inventoryForm/FileUploader.vue'
+import ArchiveDialog from 'src/components/inventoryForm/ArchiveDialog.vue'
 
 const props = defineProps({
 	inventoryLogId: {

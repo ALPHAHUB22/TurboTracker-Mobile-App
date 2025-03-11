@@ -4,7 +4,7 @@ import { apiRequest } from 'src/boot/http.js';
 
 export async function getBuildings(){
   const params = {
-    "limit": 5
+    "limit": 9
   }
   const response = await apiRequest.get('/api/method/turbotracker.api.get_warehouse_info', params )
   let buildings = []

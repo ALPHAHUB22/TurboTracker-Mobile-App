@@ -71,6 +71,7 @@ export default defineConfig((/* ctx */) => {
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#devserver
     devServer: {
       // https: true,
+      port:9500,
       open: true, // opens browser window automatically,
       // proxy: {
       //   '/api': {
@@ -160,6 +161,12 @@ export default defineConfig((/* ctx */) => {
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-capacitor-apps/configuring-capacitor
     capacitor: {
+      mode: 'capacitor',
+      target: 'android',
+      server: {
+        url: 'http://10.0.0.91:9000', // Replace with your local network IP
+        cleartext: true
+      },
       // hideSplashscreen: true
     },
     ripple: true,

@@ -1,18 +1,5 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-card class="top-sheet" flat />
-    <q-toolbar>
-    <q-toolbar-title class="row col justify-between">
-      <q-btn size="md" class="col-2" flat color="white">
-        <q-avatar style="border-radius: 10px;" size="lg">
-          <img src="https://cdn.quasar.dev/img/boy-avatar.png">
-        </q-avatar>
-      </q-btn>
-      <div class="q-mt-sm col-8 text-center">TurboTracker</div>
-      <q-btn flat class="col-2 logout-icon" icon="logout" @click="() => { isLogoutDialog = true}"></q-btn>
-    </q-toolbar-title>
-  </q-toolbar>
-    <router-view />
+  <q-btn flat class="logout-icon" icon="logout" @click="() => { isLogoutDialog = true}">
     <q-dialog v-model="isLogoutDialog" :backdrop-filter="'blur(4px) saturate(150%)'">
       <q-card style="border-radius: 10px;">
         <q-card-section class="row items-center q-pb-none text-bold">
@@ -33,20 +20,15 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <Footer />
-  </q-layout>
+  </q-btn>
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
-import Header from 'components/Header.vue'
-import { useRouter } from 'vue-router'
-import Footer from 'components/Footer.vue'
-import { apiClient } from 'src/boot/axios';
+import { ref, onMounted } from 'vue'
 import { apiRequest } from 'src/boot/http.js';
+import { useRouter } from 'vue-router'
 import { showLoading, hideLoading } from 'src/utils/loading.js'
 import { Preferences } from '@capacitor/preferences';
-
 const router = useRouter();
 const isLogoutDialog = ref(false)
 const logoutLoading = ref(false)
@@ -66,19 +48,7 @@ async function logout() {
         router.push('/login');
         hideLoading()
     }
-    // .catch((err) => {
-      //   if (err.response?.status === 404 || err.response?.status === 401) {
-      //     Notify.create({
-      //       color: 'red-5',
-      //       textColor: 'white',
-      //       icon: 'warning',
-      //       message: `${err.response?.data?.message}`
-      //     })
-      //   }
-      //   hideLoading()
-      // });
 }
-
 
 onMounted(async () => {
   const user_value = await Preferences.get({ key: 'userInfo' })
@@ -88,16 +58,7 @@ onMounted(async () => {
   token.value = token_value.value
 });
 </script>
-<style scoped>
-.top-sheet{
-  position: absolute; width: 100%;
-  height: 19vh;
-  border-top-left-radius: 0%;
-  border-top-right-radius: 0%;
-  border-bottom-left-radius: 100%;
-  border-bottom-right-radius: 100%;
-  background-color: rgb(146, 200, 255)
-}
+<style lang="css">
 .cancel-btn{
   border: 1px solid #42C2FF;
   background-color: white;
@@ -111,3 +72,4 @@ onMounted(async () => {
   color: white;
 }
 </style>
+

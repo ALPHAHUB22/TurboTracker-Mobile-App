@@ -2,20 +2,13 @@ const routes = [
   {
     path: "/",
     name: "Home",
-    component: () => import("layouts/MainLayout.vue"),
-    children: [
-      {
-        path: "",
-        name: "index",
-        component: () => import("pages/inventory/Home.vue")
-      },
-    ],
+    component: () => import("pages/Home.vue"),
     meta: { requiresAuth: true }
   },
   // {
   //   path: "/",
   //   name: "test",
-  //   component: () => import("pages/Test.vue")
+  //   component: () => import("pages/File.vue")
   // },
   {
     path: "/inventory",
@@ -34,14 +27,14 @@ const routes = [
     path: "/inventoryForm/new",
     name: "InventoryLogForm",
     props: true,
-    component: () => import("src/views/inventory/InventoryForm.vue"),
+    component: () => import("src/pages/inventory/InventoryForm.vue"),
     meta: { requiresAuth: true }
   },
   {
 		path: "/inventoryForm/:inventoryLogId",
     name: "InventoryLogDetailView",
 		props: true,
-		component: () => import("src/views/inventory/InventoryForm.vue"),
+		component: () => import("src/pages/inventory/InventoryForm.vue"),
     meta: { requiresAuth: true }
 	},
   // Always leave this as last one,

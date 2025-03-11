@@ -61,10 +61,10 @@
 import { ref, watch } from 'vue'
 import { apiClient } from 'src/boot/axios';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera'
-import FilePreview from 'components/inventory/FilePreview.vue'
+import FilePreview from 'src/components/inventoryForm/FilePreview.vue'
 import { apiRequest } from 'src/boot/http.js';
 
-const props = defineProps(['attachments']);
+const props = defineProps(['attachments', 'id']);
 const emit = defineEmits(['update:attachments']);
 const attachment_len = ref(props.attachments.length)
 const isPreview = ref(false)
@@ -79,7 +79,7 @@ const captureImage = async () => {
     })
     const { base64Content, fileName } = extractBase64(photo.dataUrl);
     const attachment = await upload_attachments(base64Content, fileName)
-
+    console.log(attachment)
     props.attachments.push(attachment)
   } catch (error) {
     console.error('Camera error:', error)
@@ -96,10 +96,16 @@ const extractBase64 = (dataUrl) => {
 };
 
 async function upload_attachments(content, fileName) {
-  const data = JSON.stringify({
+  let attachedTo = {
+    dt: "Inventory Log",
+    dn: props.id
+  }
+  let data = {
     content: content,
-    filename: fileName
-  })
+    filename: fileName,
+  }
+  if (props.id) Object.assign(data, attachedTo);
+  data = JSON.stringify(data)
   const response = await apiRequest.post('/api/method/turbotracker.api.upload_base64_file', data);
   return response.message
 }

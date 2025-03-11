@@ -139,7 +139,7 @@
     </q-pull-to-refresh>
     <div class="row justify-center" style="position: relative">
       <q-pagination class="q-ma-sm q-pa-sm rounded-borders fixed"
-        style="position: fixed; bottom: 60px; background-color: white; border: 1px solid #42C2FF; color: rgb(66, 194, 255);"
+        style="position: fixed; bottom: 60px; background-color: white; border: 1px solid #42C2FF;"
         v-if="rows.length > 0" v-model="pagination.page" :max="pagination.totalPageNumber" size="md" :max-pages="4"
         direction-links>
       </q-pagination>

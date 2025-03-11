@@ -43,9 +43,9 @@
 </template>
 <script setup>
 import { ref, reactive, watch, computed } from 'vue'
-import ListFilter from 'src/components/inventory/ListFilter.vue';
+import ListFilter from 'src/components/inventoryList/ListFilter.vue';
 import Footer from 'components/Footer.vue'
-import ListCards from 'src/components/inventory/ListCards.vue';
+import ListCards from 'src/components/inventoryList/ListCards.vue';
 import { apiClient } from 'src/boot/axios';
 import { apiRequest } from 'src/boot/http.js';
 
