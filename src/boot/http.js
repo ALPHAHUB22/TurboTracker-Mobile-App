@@ -1,4 +1,3 @@
-import { boot } from "quasar/wrappers";
 import { CapacitorHttp } from '@capacitor/core';
 import { Notify } from "quasar";
 import { showLoading, hideLoading } from "src/utils/loading.js";
@@ -43,6 +42,9 @@ async function apiRequest(url, method = "GET", options = {}) {
   try {
     showLoading();
     const response = await CapacitorHttp.request(requestConfig);
+    if (token !== null && response.status === 401){
+      await Preferences.remove({ key: 'accessToken' });
+    }
     hideLoading();
     return response.data;
   } catch (error) {

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Audio Recorder</title>
+  </head>
+  <body>
+    <h2>Audio Recorder</h2>
+    <button id="start">Start Recording</button>
+    <button id="stop" disabled>Stop Recording</button>
+    <audio id="audio" controls></audio>
+
+    <script>
+      let mediaRecorder;
+      let audioChunks = [];
+
+      document.getElementById("start").addEventListener("click", async () => {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+        });
+        mediaRecorder = new MediaRecorder(stream);
+
+        mediaRecorder.ondataavailable = (event) => {
+          audioChunks.push(event.data);
+        };
+
+        mediaRecorder.onstop = () => {
+          const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
+          const audioUrl = URL.createObjectURL(audioBlob);
+          document.getElementById("audio").src = audioUrl;
+
+          // Send to backend
+          uploadAudio(audioBlob);
+
+          // Reset chunks
+          audioChunks = [];
+        };
+
+        mediaRecorder.start();
+        document.getElementById("start").disabled = true;
+        document.getElementById("stop").disabled = false;
+      });
+
+      document.getElementById("stop").addEventListener("click", () => {
+        mediaRecorder.stop();
+        document.getElementById("start").disabled = false;
+        document.getElementById("stop").disabled = true;
+      });
+
+      async function uploadAudio(audioBlob) {
+        const formData = new FormData();
+        formData.append("file", audioBlob, "recording.wav");
+
+        try {
+          const response = await fetch(
+            "http://localhost:8008/api/method/turbotracker.mobile_integ.upload_audio",
+            {
+              method: "POST",
+              body: formData,
+            }
+          );
+
+          const data = await response.json(); // ✅ Properly await JSON response
+          console.log("Upload successful:", data);
+        } catch (error) {
+          console.error("Error uploading audio:", error);
+        }
+      }
+    </script>
+  </body>
+</html>

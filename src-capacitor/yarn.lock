@@ -967,6 +967,11 @@
   dependencies:
     tslib "^2.1.0"
 
+"@capacitor/device@^7.0.0":
+  version "7.0.0"
+  resolved "https://registry.npmjs.org/@capacitor/device/-/device-7.0.0.tgz"
+  integrity sha512-jeG4end/kQYts4j08IXFlInq9/XIMlHk8eZBth9qkPbn9N4G19C2fRo84qHd/vkkUGd8IKtHQKQcH2svVOkdhg==
+
 "@capacitor/filesystem@^1.0.0":
   version "1.1.0"
   resolved "https://registry.npmjs.org/@capacitor/filesystem/-/filesystem-1.1.0.tgz"
@@ -991,6 +996,11 @@
   version "7.0.0"
   resolved "https://registry.npmjs.org/@capacitor/preferences/-/preferences-7.0.0.tgz"
   integrity sha512-crlTtTIWcdlLfQULJ9ZiCPpvpm51WoZ8CIVG3+XSJGyavjD4bscHP15U24ya5SjpYmI44bGY9lvhvcSCfB5+AA==
+
+"@capacitor/status-bar@^7.0.0":
+  version "7.0.0"
+  resolved "https://registry.npmjs.org/@capacitor/status-bar/-/status-bar-7.0.0.tgz"
+  integrity sha512-wsvPkWkoSOXMIgVHu4c6P1sOuDSZ1ClUo5OpLRwj7u8DYzlV4jlmNzztQn2Lvsiqx1z4kfukSaqe40k1Lo4c9g==
 
 "@ionic/cli-framework-output@^2.2.8":
   version "2.2.8"

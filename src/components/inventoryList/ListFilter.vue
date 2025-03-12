@@ -22,18 +22,13 @@ const props = defineProps({
     required: true,
   },
 })
-const itemOptions = ref(["Google", "Facebook", "Twitter", "Apple", "Oracle"])
+const itemOptions = ref([])
 const itemfilterOptions = ref(itemOptions.value)
 const items = ref(null)
-const buildingOptions = ref(["Google", "Facebook", "Twitter", "Apple", "Oracle"])
+const buildingOptions = ref([])
 const buildingfilterOptions = ref(buildingOptions.value)
 const building = ref(null)
 const isArchive = ref(false)
-const visible = ref(false)
-
-function togglefilter() {
-  visible.value = !visible.value
-}
 
 function itemCreateValue(val, done) {
   if (val.length > 0) {

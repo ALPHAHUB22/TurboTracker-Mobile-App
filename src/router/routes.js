@@ -1,15 +1,15 @@
 const routes = [
+  // {
+  //   path: "/",
+  //   name: "test",
+  //   component: () => import("pages/test/SQLite.vue")
+  // },
   {
     path: "/",
     name: "Home",
     component: () => import("pages/Home.vue"),
     meta: { requiresAuth: true }
   },
-  // {
-  //   path: "/",
-  //   name: "test",
-  //   component: () => import("pages/File.vue")
-  // },
   {
     path: "/inventory",
     name: "InventoryLogList",
@@ -43,6 +43,11 @@ const routes = [
     path: "/login",
     name: "login",
     component: () => import("pages/Login.vue"),
+  },
+  {
+    path: "/profile",
+    name: "profile",
+    component: () => import("pages/Profile.vue"),
   },
   {
     path: "/:catchAll(.*)*",

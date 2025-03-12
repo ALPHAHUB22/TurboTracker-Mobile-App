@@ -4,7 +4,7 @@
     <q-card class="top-sheet" flat />
     <q-toolbar>
     <q-toolbar-title class="row col justify-between">
-      <q-btn size="md" class="col-2" flat color="white">
+      <q-btn size="md" class="col-2" flat color="white" :to="{ name: 'profile' }">
         <q-avatar style="border-radius: 10px;" size="lg">
           <img src="https://cdn.quasar.dev/img/boy-avatar.png">
         </q-avatar>
@@ -43,5 +43,8 @@ import Footer from 'components/Footer.vue'
   border-bottom-left-radius: 100%;
   border-bottom-right-radius: 100%;
   background-color: rgb(146, 200, 255)
+}
+.layout{
+  background: linear-gradient(to bottom, rgb(209, 239, 249), rgb(160, 207, 255))
 }
 </style>

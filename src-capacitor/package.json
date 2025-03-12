@@ -12,9 +12,11 @@
     "@capacitor/camera": "^7.0.0",
     "@capacitor/cli": "^7.0.1",
     "@capacitor/core": "^7.0.1",
+    "@capacitor/device": "^7.0.0",
     "@capacitor/filesystem": "^7.0.0",
     "@capacitor/network": "^7.0.0",
     "@capacitor/preferences": "^7.0.0",
+    "@capacitor/status-bar": "^7.0.0",
     "@quasar/app": "^3.3.3"
   }
 }

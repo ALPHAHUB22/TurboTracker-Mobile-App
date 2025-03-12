@@ -10,9 +10,7 @@
     "allowNavigation": [
       "10.0.0.91",
       "http://10.0.0.91:8008"
-    ],
-    "url": "http://10.0.0.91:9500",
-    "cleartext": true
+    ]
   },
   "plugins": {
     "Camera": {

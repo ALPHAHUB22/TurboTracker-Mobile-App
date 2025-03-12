@@ -1,7 +1,8 @@
 import { defineRouter } from '#q-app/wrappers'
 import { createRouter, createMemoryHistory, createWebHistory, createWebHashHistory } from 'vue-router'
 import routes from './routes'
-import { apiClient } from 'src/boot/axios';
+import { Preferences } from "@capacitor/preferences";
+import { apiRequest } from 'src/boot/http.js';
 
 /*
  * If not building with SSR mode, you can
@@ -30,15 +31,17 @@ export default defineRouter(function (/* { store, ssrContext } */) {
   async function isAuthenticated() {
     // Replace this with your own authentication logic
     // localStorage.setItem('siteUrl', "http://localhost:8002")
-    var fetchUser = await apiClient(`/api/method/frappe.auth.get_logged_user`,
+    const token = await Preferences.get({ key: "accessToken" });
+    var fetchUser = await apiRequest.post(
+      `/api/method/frappe.auth.get_logged_user`,
+      {},
         {
-          method: "POST",
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            Authorization: `Bearer ${token.value}`,
           },
         }
       )
-    if(fetchUser?.data?.message){
+    if(fetchUser?.message){
       return true;
     } else {
       return false;
