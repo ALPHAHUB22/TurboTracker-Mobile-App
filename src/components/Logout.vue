@@ -14,7 +14,7 @@
 
         <q-card-actions align="right">
           <q-btn class="text-caption cancel-btn" v-close-popup>Cancel</q-btn>
-          <q-btn class="text-caption logout-btn" :loading="logoutLoading" @click="logout()">
+          <q-btn class="text-caption confirm-btn" :loading="logoutLoading" @click="logout()">
             <q-icon size="20px" name="logout"></q-icon>
           </q-btn>
         </q-card-actions>
@@ -59,16 +59,7 @@ onMounted(async () => {
 });
 </script>
 <style lang="css">
-.cancel-btn{
-  border: 1px solid #42C2FF;
-  background-color: white;
-  color: #42C2FF;
-}
 .logout-icon{
-  color: white;
-}
-.logout-btn{
-  background-color: #42C2FF;
   color: white;
 }
 </style>

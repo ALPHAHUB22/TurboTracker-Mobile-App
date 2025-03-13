@@ -1,11 +1,12 @@
 <template>
-  <q-layout view="lHh Lpr lFf" class="layout">
+  <q-layout view="lHh Lpr lFf" class="form-layout">
     <!-- <q-header style="background-color: white;color:black" class="no-shadow" elevated> -->
       <q-toolbar style="position: fixed; z-index: 1;background-color: rgb(239, 251, 255);color:black">
         <q-btn flat dense icon="keyboard_arrow_left" aria-label="Menu" @click="$router.go(-1)" />
         <q-toolbar-title class="text-subtitle1">
           {{ inventoryLogId ? inventoryLogId : 'New'}}
         </q-toolbar-title>
+        <div :class="isOnline ? 'online' : 'offline'" ></div>
         <q-btn flat icon="more_vert">
           <q-menu transition-show="flip-right" transition-hide="flip-left" :offset="[0, 5]">
             <q-list>
@@ -90,6 +91,7 @@ import { useRouter } from 'vue-router';
 import { Notify } from 'quasar';
 import FileUploader from 'src/components/inventoryForm/FileUploader.vue'
 import ArchiveDialog from 'src/components/inventoryForm/ArchiveDialog.vue'
+import { isOnline } from 'src/boot/network';
 
 const props = defineProps({
 	inventoryLogId: {
@@ -440,8 +442,5 @@ async function unArchiveLog(){
 }
 .q-select{
   /* background-color: white; */
-}
-.layout{
-  background: linear-gradient(to bottom, rgb(247, 251, 253) , rgb(239, 251, 255))
 }
 </style>

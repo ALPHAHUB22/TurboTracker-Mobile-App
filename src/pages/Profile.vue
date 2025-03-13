@@ -1,7 +1,13 @@
 <template>
   <q-layout view="lHh Lpr lFf">
+    <q-toolbar>
+        <q-btn flat dense icon="keyboard_arrow_left" @click="$router.go(-1)" />
+        <q-toolbar-title class="text-subtitle1">
+          Profile
+        </q-toolbar-title>
+      </q-toolbar>
     <q-page-container>
-  <div class="q-pa-md">
+  <div class="q-px-md">
       <q-card class="my-card">
         <img src="https://cdn.quasar.dev/img/boy-avatar.png">
       <q-card-section>
@@ -9,7 +15,7 @@
         <div class="text-subtitle2">arun.r@rivestonetech.com</div>
       </q-card-section>
       <q-card-section class="q-pt-none">
-        <q-btn label="Prepare for Offline" @click="prompt = !prompt">
+        <q-btn label="Prepare for Offline" color="primary" @click="prompt = !prompt">
           <q-dialog v-model="prompt" persistent>
             <q-card style="min-width: 350px">
               <q-card-section>
@@ -88,15 +94,3 @@ function buildingFilterFn(val, update) {
   })
 }
 </script>
-<style lang="css">
-
-.cancel-btn{
-  border: 1px solid #42C2FF;
-  background-color: white;
-  color: #42C2FF;
-}
-.confirm-btn{
-  background-color: #42C2FF;
-  color: white;
-}
-</style>

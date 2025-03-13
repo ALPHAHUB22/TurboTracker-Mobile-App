@@ -15,7 +15,7 @@
 
         <q-card-actions align="right">
           <q-btn class="text-caption cancel-btn" @click="cancelDialog">Cancel</q-btn>
-          <q-btn class="text-caption archive-btn" :loading="delLoading" @click="archiveLog()" >
+          <q-btn class="text-caption confirm-btn" :loading="delLoading" @click="archiveLog()" >
             <q-icon size="20px" name="archive"></q-icon>
           </q-btn>
         </q-card-actions>
@@ -67,14 +67,3 @@ watch(
   }
 )
 </script>
-<style lang="css">
-.cancel-btn{
-  border: 1px solid #42C2FF;
-  background-color: white;
-  color: #42C2FF;
-}
-.archive-btn{
-  background-color: #42C2FF;
-  color: white;
-}
-</style>

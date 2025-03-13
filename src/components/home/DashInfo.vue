@@ -47,7 +47,7 @@ onMounted(async()=> {
   animateValue(buildingCount, 0, dashInfoList.value.building, 500);
 })
 </script>
-<style lang="css">
+<style>
 .add-icon {
   border-radius: 7px;
   padding: 5px;

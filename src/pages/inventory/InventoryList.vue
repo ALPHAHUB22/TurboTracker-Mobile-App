@@ -1,11 +1,12 @@
 <template>
-  <q-layout view="lHh Lpr lFf" style="background-color: #d1eff9;">
+  <q-layout view="lHh Lpr lFf" class="base-layout">
     <q-page-container>
       <!-- <q-header style="background-color: #d1eff9;"> -->
         <q-toolbar>
           <q-toolbar-title style="color: black">
             {{ filterName ? filterName : 'Inventory'}}
           </q-toolbar-title>
+          <div :class="isOnline ? 'online' : 'offline'" class="q-mr-md"></div>
           <div class="q-gutter-sm">
             <q-btn round style="color: white; background-color: rgb(66, 194, 255)" icon="add" size="14px" :to="{ name: 'InventoryLogForm' }" />
           </div>
@@ -48,6 +49,7 @@ import Footer from 'components/Footer.vue'
 import ListCards from 'src/components/inventoryList/ListCards.vue';
 import { apiClient } from 'src/boot/axios';
 import { apiRequest } from 'src/boot/http.js';
+import { isOnline } from 'src/boot/network';
 
 const visible = ref(false)
 const props = defineProps({

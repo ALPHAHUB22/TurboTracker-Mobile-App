@@ -4,17 +4,45 @@ body {
   font-family: 'Arabetics Symphony', sans-serif !important;
 }
 
-.q-layout{
+.base-layout{
   background: linear-gradient(to bottom, rgb(209, 239, 249), rgb(160, 207, 255))
 }
 
+.form-layout{
+  background: linear-gradient(to bottom, rgb(247, 251, 253) , rgb(239, 251, 255))
+}
+
+.cancel-btn{
+  border: 1px solid var(--q-primary) !important;
+  background-color: white !important;
+  color: var(--q-primary) !important;
+}
+
+.confirm-btn{
+  background-color: var(--q-primary) !important;
+  color: white !important;
+}
+
+.delete-btn{
+  background-color: #ff0000 !important;
+  color: white !important;
+}
 .online::after {
   content: "";
-  margin-top: 20px;
   display: inline-block;
   width: 8px;
   height: 8px;
   background-color: #00ff00;
+  border-radius: 50%;
+  animation: pulse 1.5s infinite;
+}
+
+.offline::after {
+  content: "";
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  background-color: #ff0000;
   border-radius: 50%;
   animation: pulse 1.5s infinite;
 }

@@ -2,7 +2,7 @@ const routes = [
   // {
   //   path: "/",
   //   name: "test",
-  //   component: () => import("pages/test/SQLite.vue")
+  //   component: () => import("pages/test/File.vue")
   // },
   {
     path: "/",

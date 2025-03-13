@@ -15,7 +15,8 @@ export default defineConfig((/* ctx */) => {
       "axios",
       "capacitor",
       "http",
-      "sqlite"
+      "sqlite",
+      "network"
     ],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#css
@@ -165,7 +166,7 @@ export default defineConfig((/* ctx */) => {
       mode: 'capacitor',
       target: 'android',
       server: {
-        url: 'http://10.0.0.91:9000', // Replace with your local network IP
+        url: 'http://192.168.211.52:9500', // Replace with your local network IP
         cleartext: true
       },
       // hideSplashscreen: true

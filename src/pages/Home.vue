@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh Lpr lFf" class="layout">
+  <q-layout view="lHh Lpr lFf" class="base-layout">
   <q-page-container>
     <q-card class="top-sheet" flat />
     <q-toolbar>
@@ -10,7 +10,7 @@
         </q-avatar>
       </q-btn>
       <div class="q-mt-sm col-7 text-center">TurboTracker</div>
-      <div class="online"></div>
+      <div :class="isOnline ? 'online' : 'offline'" class="q-mt-xs q-mr-md"></div>
       <Logout class="col-1"/>
     </q-toolbar-title>
   </q-toolbar>
@@ -30,7 +30,7 @@ import IntroPanel from 'src/components/home/IntroPanel.vue'
 import DashInfo from 'src/components/home/DashInfo.vue'
 import BuildingQuickLinks from 'src/components/home/BuildingQuickLinks.vue'
 import Footer from 'components/Footer.vue'
-
+import { isOnline } from 'src/boot/network';
 
 
 </script>
@@ -44,7 +44,7 @@ import Footer from 'components/Footer.vue'
   border-bottom-right-radius: 100%;
   background-color: rgb(146, 200, 255)
 }
-.layout{
+/* .layout{
   background: linear-gradient(to bottom, rgb(209, 239, 249), rgb(160, 207, 255))
-}
+} */
 </style>

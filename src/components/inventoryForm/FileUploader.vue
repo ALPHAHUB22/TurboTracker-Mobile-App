@@ -20,11 +20,11 @@
   <q-dialog v-model="isPreview" :backdrop-filter="'blur(4px) saturate(150%)'">
     <q-card style="border-radius: 10px;">
       <q-card-actions style="position: absolute; right: 0%;z-index: 1;">
-        <q-btn class="text-caption" size="md" style="border: 1px solid red; background-color: red;" :loading="delLoading"
+        <q-btn class="text-caption delete-btn" size="md" :loading="delLoading"
           @click="() => confirmDeleteAttachment(previewAttachment)">
           <q-icon color="white" name="bi-trash"></q-icon>
         </q-btn>
-        <q-btn class="text-caption download-btn" size="md" :loading="downloadLoading"
+        <q-btn class="text-caption confirm-btn" size="md" :loading="downloadLoading"
           @click="downloadFile(previewAttachment.download_url)">
           <q-icon name="bi-download"></q-icon>
         </q-btn>
@@ -48,7 +48,7 @@
 
       <q-card-actions align="right">
         <q-btn class="text-caption cancel-btn" v-close-popup>Cancel</q-btn>
-        <q-btn class="text-caption confirm-del-btn" :loading="confirmDelLoading"
+        <q-btn class="text-caption delete-btn" :loading="confirmDelLoading"
           @click="deleteAttachment(delDialogInfo)">
           <q-icon size="20px" name="bi-trash"></q-icon>
         </q-btn>
@@ -177,21 +177,5 @@ watch(
 .add-icon {
   /* padding: 5px; */
   color: #42C2FF;
-}
-
-.download-btn {
-  background-color: #42C2FF;
-  color: white;
-}
-
-.cancel-btn {
-  border: 1px solid #42C2FF;
-  background-color: white;
-  color: #42C2FF;
-}
-
-.confirm-del-btn {
-  color: white;
-  background-color: red;
 }
 </style>
