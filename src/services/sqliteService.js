@@ -30,6 +30,20 @@ class SQLiteService {
     }
   }
 
+  async deleteDatabase(dbName, readOnly) {
+    try {
+        // Close the connection before deleting (important)
+        await this.sqliteConnection.closeConnection(dbName, readOnly);
+
+        // Delete the database
+        await this.sqliteConnection.deleteDatabase(dbName, readOnly);
+
+        console.log(`Database '${dbName}' deleted successfully!`);
+    } catch (error) {
+        console.error("Error deleting database:", error);
+    }
+}
+
   getPlatform() {
     return this.platform;
   }
@@ -85,6 +99,7 @@ class SQLiteService {
   async saveToLocalDisk(dbName) {
     try {
       await this.sqliteConnection.saveToLocalDisk(dbName);
+      console.log(this)
     } catch (error) {
       const msg = error.message ? error.message : error;
       throw new Error(`sqliteService.saveToLocalDisk: ${msg}`);
@@ -94,6 +109,7 @@ class SQLiteService {
   async saveToStore(dbName) {
     try {
       await this.sqliteConnection.saveToStore(dbName);
+      // console.log("TEST GOT")
     } catch (error) {
       const msg = error.message ? error.message : error;
       throw new Error(`sqliteService.saveToStore: ${msg}`);

@@ -21,12 +21,14 @@
   </div>
 </template>
 <script setup>
-import {ref, onMounted} from 'vue'
-import { getDashInfo } from 'src/data/inventory.js'
+import {ref, onMounted, inject, watch} from 'vue'
+import { getOnlineDashInfo } from 'src/data/inventory.js'
+import { isOnline } from 'src/boot/network';
 
+const storageServ = inject('storageServ');
 const itemCount = ref(0)
 const buildingCount = ref(0)
-const dashInfoList = ref([])
+const dashInfoList = ref({})
 
 function animateValue(obj, start, end, duration) {
   let startTimestamp = null;
@@ -41,10 +43,32 @@ function animateValue(obj, start, end, duration) {
   window.requestAnimationFrame(step);
 }
 
-onMounted(async()=> {
-  dashInfoList.value = await getDashInfo()
+async function getDashInfo(isOnline){
+  if (isOnline){
+    dashInfoList.value = await getOnlineDashInfo()
+    console.log(dashInfoList)
+  }
+  else{
+    dashInfoList.value = await storageServ.getOfflineDashInfo()
+  }
+  animateDash()
+}
+
+watch(
+  () => isOnline.value,
+  async(value) => {
+    getDashInfo(value)
+  }
+)
+
+function animateDash(){
   animateValue(itemCount, 0, dashInfoList.value.item, 500);
   animateValue(buildingCount, 0, dashInfoList.value.building, 500);
+}
+
+onMounted(async()=> {
+  getDashInfo(isOnline.value)
+  animateDash()
 })
 </script>
 <style>

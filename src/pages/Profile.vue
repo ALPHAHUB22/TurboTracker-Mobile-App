@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view="lHh Lpr lFf" class="base-layout">
     <q-toolbar>
         <q-btn flat dense icon="keyboard_arrow_left" @click="$router.go(-1)" />
         <q-toolbar-title class="text-subtitle1">
@@ -15,7 +15,7 @@
         <div class="text-subtitle2">arun.r@rivestonetech.com</div>
       </q-card-section>
       <q-card-section class="q-pt-none">
-        <q-btn label="Prepare for Offline" color="primary" @click="prompt = !prompt">
+        <q-btn :disable="isOnline ? false : true" label="Prepare for Offline" color="primary" @click="prompt = !prompt">
           <q-dialog v-model="prompt" persistent>
             <q-card style="min-width: 350px">
               <q-card-section>
@@ -28,14 +28,15 @@
               </q-card-section>
 
               <q-card-actions align="right">
-                <q-btn class="text-bold cancel-btn" @click="" v-close-popup >Cancel</q-btn>
-                <q-btn class="text-bold confirm-btn" @click="" v-close-popup >
+                <q-btn class="text-bold cancel-btn" v-close-popup >Cancel</q-btn>
+                <q-btn class="text-bold confirm-btn" @click="initiateOffline" v-close-popup >
                   Confirm
                 </q-btn>
               </q-card-actions>
             </q-card>
         </q-dialog>
         </q-btn>
+        <div>Offline: {{ offlineBuilding }}</div>
       </q-card-section>
     </q-card>
   </div>
@@ -43,13 +44,21 @@
 </q-layout>
 </template>
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, inject } from 'vue'
 import { apiRequest } from 'src/boot/http.js';
+import { Preferences } from '@capacitor/preferences';
+import { prepareToOffline } from 'src/data/profile';
+import { isOnline } from 'src/boot/network';
 
+let dbName = ""
+
+const db = inject('dbConnection');
+const storageServ = inject('storageServ');
 const prompt = ref(false)
 const buildingOptions = ref([])
 const buildingfilterOptions = ref([])
 const building = ref(null)
+const offlineBuilding = ref("")
 
 const get_building_list = async () => {
   const response = await apiRequest.get('/api/resource/Warehouse?filters=[["custom_is_building", "=", 1]]&limit_start=0&limit_page_length=1000')
@@ -93,4 +102,21 @@ function buildingFilterFn(val, update) {
     }
   })
 }
+
+const initiateOffline = async() => {
+  console.log(building.value)
+  prepareToOffline(db, building.value)
+  offlineBuilding.value = building.value
+}
+
+const setOfflineBuilding = async() => {
+  const offlineBuildingName = await storageServ.getOfflineDashBuilding()
+  offlineBuilding.value = offlineBuildingName
+}
+
+onMounted(async() => {
+  const db = await Preferences.get({ key: 'dbName' })
+  dbName = db.value
+  setOfflineBuilding()
+})
 </script>

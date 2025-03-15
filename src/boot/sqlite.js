@@ -9,9 +9,15 @@ import SqliteService from "src/services/sqliteService";
 import DbVersionService from "src/services/dbVersionService";
 import StorageService from "src/services/storageService";
 import InitializeAppService from "src/services/initializeAppService";
+import { Preferences } from '@capacitor/preferences';
 
 // ✅ Quasar Boot Function
 export default boot(async ({ app }) => {
+  const dbName = "ttrDB"
+  await Preferences.set({
+    key: 'dbName',
+    value: dbName
+  });
   const sqliteServ = new SqliteService();
   const dbVersionServ = new DbVersionService();
   const storageServ = new StorageService(sqliteServ, dbVersionServ);
@@ -31,7 +37,7 @@ export default boot(async ({ app }) => {
   const initApp = async () => {
     try {
       await initAppServ.initializeApp();
-      dbConnection = await sqliteServ.openDatabase('ttdatabase');
+      dbConnection = await sqliteServ.openDatabase(dbName);
       console.log('SQLite Initialized');
     } catch (error) {
       console.error('App Initialization error:', error);

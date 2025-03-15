@@ -147,11 +147,14 @@
   </div>
 </template>
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, onMounted, inject } from 'vue'
 import { apiClient } from 'src/boot/axios';
 import { apiRequest } from 'src/boot/http.js';
+import { isOnline } from 'src/boot/network';
+import { getOnlineInventoryList } from 'src/data/inventory.js'
 
 const len = ref("")
+const storageServ = inject('storageServ');
 // const allSelected = ref(false)
 const props = defineProps({
   filters: {
@@ -163,7 +166,7 @@ const props = defineProps({
 
 function refresh(done) {
   setTimeout(async () => {
-    await get_inventory_list()
+    await getInventoryList()
     done()
   }, 1000)
 }
@@ -190,31 +193,49 @@ const pagination = ref({
   rowsNumber: rows.value.length
 })
 
-
-const get_inventory_list = async () => {
-  const limit_start = (pagination.value.page - 1) * pagination.value.rowsPerPage
+async function getInventoryList(){
+  let response = {}
   const params = {
-    limit_start: limit_start,
-    page_length: rowsPerPage,
+    page: pagination.value.page,
+    limit: pagination.value.rowsPerPage,
     filters: encodeURIComponent(JSON.stringify(filters.value))
   }
-  const response = await apiRequest.get('/api/method/turbotracker.api.get', params)
-  rows.value = response.message[0]
-  totalRecords.value = response.message[1]
-  pagination.value.totalPageNumber = Math.ceil(totalRecords.value / rowsPerPage);
-};
+  if(isOnline.value){
+    params["filters"] = encodeURIComponent(JSON.stringify(filters.value))
+    response = await getOnlineInventoryList(params)
+  }
+  else{
+    params["filters"] = filters.value
+    response = await storageServ.getOfflineInventoryList(params)
+    console.log(response)
+  }
+  rows.value = response.message?.records || response?.records || 0
+  totalRecords.value = response.message?.total_count || response?.total_count || 0
+  pagination.value.totalPageNumber = response.message?.page_count || response?.page_count || 0
+}
+
+
+// const getInventoryList = async () => {
+//   const params = {
+//     page: pagination.value.page,
+//     limit: pagination.value.rowsPerPage,
+//     filters: encodeURIComponent(JSON.stringify(filters.value))
+//   }
+//   const response = await apiRequest.get('/api/method/turbotracker.api.get', params)
+//   rows.value = response.message?.records || []
+//   totalRecords.value = response.message?.total_count || 0
+//   pagination.value.totalPageNumber = response.message?.page_count || 0
+// };
 
 // Watch for changes in pagination.page
 watch(() => pagination.value.page, () => {
-  get_inventory_list();
+  getInventoryList();
 });
 
 watch(() => props.filters, () => {
   filters.value = props.filters
-  get_inventory_list();
+  getInventoryList();
 }, { deep: true });
-
-get_inventory_list()
 
 const columns = [
   { name: 'item_code', align: 'center', label: 'Item Title', field: 'item_code', sortable: true },
@@ -278,6 +299,18 @@ function popDialog(row) {
   dialogRow.value = row
   isDialog.value = true
 }
+
+watch(
+  () => isOnline.value,
+  async(value) => {
+    getInventoryList()
+  }
+)
+
+onMounted(() => {
+  getInventoryList()
+})
+
 </script>
 
 <style lang="css">

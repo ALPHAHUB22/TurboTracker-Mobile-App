@@ -7,6 +7,8 @@ export const isOnline = ref(true); // Reactive network status
 // Function to listen for network status changes
 async function setupNetworkListener() {
     // Listen for network changes
+    const status = await Network.getStatus();
+    isOnline.value = status.connected;
     Network.addListener('networkStatusChange', (status) => {
         console.log(`📡 Network changed: ${status.connected ? 'Online' : 'Offline'}`);
         isOnline.value = status.connected; // Update reactive state

@@ -43,14 +43,16 @@
   </q-layout>
 </template>
 <script setup>
-import { ref, reactive, watch, computed } from 'vue'
+import { ref, reactive, watch, computed, onMounted, inject } from 'vue'
 import ListFilter from 'src/components/inventoryList/ListFilter.vue';
 import Footer from 'components/Footer.vue'
 import ListCards from 'src/components/inventoryList/ListCards.vue';
 import { apiClient } from 'src/boot/axios';
 import { apiRequest } from 'src/boot/http.js';
 import { isOnline } from 'src/boot/network';
+import { getOnlineItems, getOnlineBuildings } from 'src/data/inventory.js'
 
+const storageServ = inject('storageServ');
 const visible = ref(false)
 const props = defineProps({
 	filter: {
@@ -64,12 +66,6 @@ const searchText = ref(null)
 const itemOptions = ref([])
 const itemfilterOptions = ref([])
 const items = ref([])
-const get_item_list = async () => {
-  const response = await apiRequest.get('/api/resource/Item?limit_start=0&limit_page_length=1000')
-  itemOptions.value = response.data.map(row => row.name)
-  itemfilterOptions.value = itemOptions.value
-}
-get_item_list()
 const isFilterApplied = ref(false)
 const buildingOptions = ref([])
 const buildingfilterOptions = ref([])
@@ -77,12 +73,20 @@ const building = ref(props.filter?props.filter: null)
 const filterName = computed(() => building.value);
 const isArchive = ref(false)
 
-const get_building_list = async () => {
-  const response = await apiRequest.get('/api/resource/Warehouse?filters=[["custom_is_building", "=", 1]]&limit_start=0&limit_page_length=1000')
-  buildingOptions.value = response.data.map(row => row.name)
-  buildingfilterOptions.value = buildingOptions.value
+async function getFilterOptions(){
+  let itemOptionList = []
+  let buildingOptionList = []
+  if(isOnline.value){
+    itemOptionList = await getOnlineItems()
+    buildingOptionList = await getOnlineBuildings()
+  }
+  else{
+    itemOptionList = await storageServ.getOfflineItems()
+    buildingOptionList = await storageServ.getOfflineBuildings()
+  }
+  itemOptions.value = itemfilterOptions.value = [...itemOptionList]
+  buildingOptions.value = buildingfilterOptions.value = [...buildingOptionList]
 }
-get_building_list()
 
 function itemCreateValue(val, done) {
   if (val.length > 0) {
@@ -161,13 +165,14 @@ const filterConditions = reactive({
 
 function recordFilter() {
   let conditions = {}
-  if (items.value.length > 0 || building.value || isArchive.value){
+  console.log(items.value)
+  if (items.value?.length > 0 || building.value || isArchive.value){
     isFilterApplied.value = true
   }
   else{
     isFilterApplied.value = false
   }
-  if (items.value.length > 0) {
+  if (items.value?.length > 0) {
     conditions.item_code = items.value
   }
   if (building.value) {
@@ -182,7 +187,7 @@ function recordFilter() {
 
 const onDialogClose = () => {
   if (!isFilterApplied.value){
-    items.value.length = []
+    items.value = []
     building.value = null
     isArchive.value = false
   }
@@ -204,6 +209,15 @@ watch(
     filterConditions.searchText = value
   }
 )
+watch(
+  () => isOnline.value,
+  async(value) => {
+    getFilterOptions()
+  }
+)
+onMounted(async()=>{
+  getFilterOptions()
+})
 
 </script>
 <style scoped>

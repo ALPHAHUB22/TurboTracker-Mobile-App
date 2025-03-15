@@ -1,7 +1,7 @@
 import { inject } from 'vue';
 
+const db = inject('dbConnection');
 export function useDb() {
-  const db = inject('dbConnection');
   if (!db) {
     console.error('Database connection is not initialized.');
   }

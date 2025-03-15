@@ -6,7 +6,9 @@ import { Preferences } from "@capacitor/preferences";
 // Function to get API base URL
 async function getBaseUrl() {
   const siteUrl = await Preferences.get({ key: "siteUrl" });
-  return siteUrl.value || "http://10.0.0.91:8008/";
+  // const url = "http://10.0.0.91:8008/"
+  const url = "http://localhost:8008/"
+  return siteUrl.value || url;
 }
 
 // Function to get Authorization Token
