@@ -63,7 +63,7 @@ async function onSubmit() {
         const userInfo = {
           email: email.value,
           name: response.full_name,
-          employee_id: response.employee_id
+          profile_image: response.user_image
         }
         await Preferences.set({
           key: 'userInfo',

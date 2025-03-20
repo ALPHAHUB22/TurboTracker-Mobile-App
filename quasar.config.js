@@ -16,7 +16,8 @@ export default defineConfig((/* ctx */) => {
       "capacitor",
       "http",
       "sqlite",
-      "network"
+      "network",
+      "prerequisites"
     ],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#css
@@ -73,7 +74,7 @@ export default defineConfig((/* ctx */) => {
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#devserver
     devServer: {
       // https: true,
-      port:9500,
+      port:9501,
       open: true, // opens browser window automatically,
       // proxy: {
       //   '/api': {
@@ -166,7 +167,7 @@ export default defineConfig((/* ctx */) => {
       mode: 'capacitor',
       target: 'android',
       server: {
-        url: 'http://192.168.211.52:9500', // Replace with your local network IP
+        // url: 'http://192.168.211.52:9500', // Replace with your local network IP
         cleartext: true
       },
       // hideSplashscreen: true

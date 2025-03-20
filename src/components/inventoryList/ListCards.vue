@@ -303,6 +303,7 @@ function popDialog(row) {
 watch(
   () => isOnline.value,
   async(value) => {
+    pagination.value.page = 1
     getInventoryList()
   }
 )

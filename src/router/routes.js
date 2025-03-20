@@ -48,6 +48,7 @@ const routes = [
     path: "/profile",
     name: "profile",
     component: () => import("pages/Profile.vue"),
+    meta: { requiresAuth: true }
   },
   {
     path: "/:catchAll(.*)*",

@@ -23,20 +23,31 @@
     </q-dialog>
 </template>
 <script setup>
-import {ref, watch} from 'vue'
+import {ref, watch, inject } from 'vue'
 import { useRouter } from 'vue-router';
 import { Notify } from 'quasar';
 import { apiClient } from 'src/boot/axios';
 import { apiRequest } from 'src/boot/http.js';
+import { isOnline } from 'src/boot/network';
 
 const router = useRouter();
-
+const storageServ = inject('storageServ');
 const props = defineProps(['isArchiveDialog',"id"]);
 const emit = defineEmits(['update:isArchiveDialog', "isArchive"]);
 const isArchiveDialog = ref(props.isArchiveDialog)
 async function archiveLog(){
   try {
-    const response = await apiRequest.post('/api/method/turbotracker.mobile_integ.inventory.archive_log', {"name": props.id, "archive_status": true});
+    const params = {
+      "name": props.id,
+      "archive_status": true
+    }
+    let response
+    if (isOnline.value){
+      response = await updateArchiveOnline(params)
+    }
+    else{
+      response = await storageServ.updateArchiveOffline(params)
+    }
     Notify.create({
       color: 'green-5',
       textColor: 'white',

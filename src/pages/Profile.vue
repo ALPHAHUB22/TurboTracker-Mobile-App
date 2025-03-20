@@ -5,17 +5,18 @@
         <q-toolbar-title class="text-subtitle1">
           Profile
         </q-toolbar-title>
+        <div :class="isOnline ? 'online' : 'offline'" class="q-mr-lg" ></div>
       </q-toolbar>
     <q-page-container>
   <div class="q-px-md">
       <q-card class="my-card">
-        <img src="https://cdn.quasar.dev/img/boy-avatar.png">
+        <img :src="userInfo?.profile_image">
       <q-card-section>
         <div class="text-h6 text-bold">Arun</div>
         <div class="text-subtitle2">arun.r@rivestonetech.com</div>
       </q-card-section>
       <q-card-section class="q-pt-none">
-        <q-btn :disable="isOnline ? false : true" label="Prepare for Offline" color="primary" @click="prompt = !prompt">
+        <q-btn :disable="isOnline ? false : true" label="Prepare for Offline" color="primary" @click="preparOfflineDialog()">
           <q-dialog v-model="prompt" persistent>
             <q-card style="min-width: 350px">
               <q-card-section>
@@ -36,7 +37,8 @@
             </q-card>
         </q-dialog>
         </q-btn>
-        <div>Offline: {{ offlineBuilding }}</div>
+        <div v-if="offlineBuilding">Offline: <strong>{{ offlineBuilding }}</strong></div>
+        <!-- <div v-if="lastSyncTime">Last Sync Time: <strong>{{ lastSyncTime }}</strong></div> -->
       </q-card-section>
     </q-card>
   </div>
@@ -44,11 +46,12 @@
 </q-layout>
 </template>
 <script setup>
-import { ref, onMounted, inject } from 'vue'
-import { apiRequest } from 'src/boot/http.js';
+import { ref, onMounted, inject, watch } from 'vue'
 import { Preferences } from '@capacitor/preferences';
 import { prepareToOffline } from 'src/data/profile';
 import { isOnline } from 'src/boot/network';
+import { getOnlineBuildings } from 'src/data/inventory.js'
+import { Notify } from 'quasar'
 
 let dbName = ""
 
@@ -59,13 +62,18 @@ const buildingOptions = ref([])
 const buildingfilterOptions = ref([])
 const building = ref(null)
 const offlineBuilding = ref("")
-
+const lastSyncTime = ref("")
+const userInfo = ref({})
+// userInfo.user_image
 const get_building_list = async () => {
-  const response = await apiRequest.get('/api/resource/Warehouse?filters=[["custom_is_building", "=", 1]]&limit_start=0&limit_page_length=1000')
-  buildingOptions.value = response.data.map(row => row.name)
-  buildingfilterOptions.value = buildingOptions.value
+  if (isOnline.value){
+    const response = await getOnlineBuildings()
+    console.log(response)
+    // const response = await apiRequest.get('/api/resource/Warehouse?filters=[["custom_is_building", "=", 1]]&limit_start=0&limit_page_length=1000')
+    buildingOptions.value = response
+    buildingfilterOptions.value = buildingOptions.value
+  }
 }
-get_building_list()
 
 function buildingCreateValue(val, done) {
   if (val.length > 0) {
@@ -105,8 +113,24 @@ function buildingFilterFn(val, update) {
 
 const initiateOffline = async() => {
   console.log(building.value)
-  prepareToOffline(db, building.value)
+  await prepareToOffline(db, storageServ, building.value)
   offlineBuilding.value = building.value
+
+}
+
+const preparOfflineDialog = async() =>{
+  const syncStatus = (await Preferences.get({ key: 'syncStatus' })).value
+  console.log(typeof syncStatus)
+  if (!JSON.parse(syncStatus)){
+    Notify.create({
+      color: 'red-5',
+      textColor: 'white',
+      icon: 'warning',
+      message: `Please sync the locally captured inventories to the server before preparing for offline mode`
+    })
+    return false
+  }
+  prompt.value = !prompt.value
 }
 
 const setOfflineBuilding = async() => {
@@ -114,9 +138,24 @@ const setOfflineBuilding = async() => {
   offlineBuilding.value = offlineBuildingName
 }
 
+watch(
+  () => isOnline.value,
+  async(value) => {
+    prompt.value = false
+    get_building_list()
+    setOfflineBuilding()
+  }
+)
+
 onMounted(async() => {
   const db = await Preferences.get({ key: 'dbName' })
   dbName = db.value
+  const user = await Preferences.get({ key: 'userInfo' })
+  userInfo.value = JSON.parse(user.value)
+  // await Preferences.remove({ key: 'lastSyncTime' });
+  // await Preferences.remove({ key: 'nextSyncTime' });
+  // await Preferences.remove({ key: 'localEditInitiate' });
+  get_building_list()
   setOfflineBuilding()
 })
 </script>

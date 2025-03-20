@@ -3,6 +3,7 @@ import { createRouter, createMemoryHistory, createWebHistory, createWebHashHisto
 import routes from './routes'
 import { Preferences } from "@capacitor/preferences";
 import { apiRequest } from 'src/boot/http.js';
+import { isOnline } from 'src/boot/network';
 
 /*
  * If not building with SSR mode, you can
@@ -32,20 +33,26 @@ export default defineRouter(function (/* { store, ssrContext } */) {
     // Replace this with your own authentication logic
     // localStorage.setItem('siteUrl', "http://localhost:8002")
     const token = await Preferences.get({ key: "accessToken" });
-    var fetchUser = await apiRequest.post(
-      `/api/method/frappe.auth.get_logged_user`,
-      {},
-        {
-          headers: {
-            Authorization: `Bearer ${token.value}`,
-          },
-        }
-      )
-    if(fetchUser?.message){
-      return true;
-    } else {
-      return false;
+    let isAuth = false
+    console.log(isOnline.value)
+    if (isOnline.value){
+      var fetchUser = await apiRequest.post(
+        `/api/method/frappe.auth.get_logged_user`,
+        {},
+          {
+            headers: {
+              Authorization: `Bearer ${token.value}`,
+            },
+          }
+        )
+      if(fetchUser?.message) isAuth = true;
+      else isAuth = false
     }
+    else{
+      isAuth = true
+    }
+    console.log(isAuth, "GHT")
+    return isAuth
   }
 
   Router.beforeEach(async(to, from, next) => {

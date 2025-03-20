@@ -6,8 +6,8 @@ import { Preferences } from "@capacitor/preferences";
 // Function to get API base URL
 async function getBaseUrl() {
   const siteUrl = await Preferences.get({ key: "siteUrl" });
-  // const url = "http://10.0.0.91:8008/"
-  const url = "http://localhost:8008/"
+  const url = "http://10.0.0.91:8008/"
+  // const url = "http://localhost:8008/"
   return siteUrl.value || url;
 }
 
@@ -25,6 +25,7 @@ async function apiRequest(url, method = "GET", options = {}) {
   const headers = {
     "Content-Type": "application/json",
     ...(token ? { Authorization: token } : {}),
+    ...(options.headers || {}),
   };
 
   // Initialize request config
@@ -43,6 +44,8 @@ async function apiRequest(url, method = "GET", options = {}) {
 
   try {
     showLoading();
+    console.log(requestConfig)
+    console.log(options)
     const response = await CapacitorHttp.request(requestConfig);
     if (token !== null && response.status === 401){
       await Preferences.remove({ key: 'accessToken' });

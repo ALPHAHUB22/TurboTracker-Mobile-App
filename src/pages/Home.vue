@@ -6,7 +6,7 @@
     <q-toolbar-title class="row col justify-between">
       <q-btn size="md" class="col-2" flat color="white" :to="{ name: 'profile' }">
         <q-avatar style="border-radius: 10px;" size="lg">
-          <img src="https://cdn.quasar.dev/img/boy-avatar.png">
+          <img :src="userInfo?.profile_image">
         </q-avatar>
       </q-btn>
       <div class="q-mt-sm col-7 text-center">TurboTracker</div>
@@ -16,6 +16,7 @@
   </q-toolbar>
     <IntroPanel />
     <DashInfo />
+    <Sync />
     <BuildingQuickLinks />
     <div class="text-center">
       <p>For adding new building, please contact System Admin</p>
@@ -25,13 +26,22 @@
 </q-layout>
 </template>
 <script setup>
+import { ref, onMounted } from 'vue'
 import Logout from 'src/components/Logout.vue'
 import IntroPanel from 'src/components/home/IntroPanel.vue'
 import DashInfo from 'src/components/home/DashInfo.vue'
+import Sync from 'src/components/home/Sync.vue'
 import BuildingQuickLinks from 'src/components/home/BuildingQuickLinks.vue'
 import Footer from 'components/Footer.vue'
 import { isOnline } from 'src/boot/network';
+import { Preferences } from '@capacitor/preferences';
 
+const userInfo = ref({})
+
+onMounted(async()=>{
+  const user = await Preferences.get({ key: 'userInfo' })
+  userInfo.value = JSON.parse(user.value)
+})
 
 </script>
 <style scoped>

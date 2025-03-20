@@ -1,6 +1,7 @@
 import { boot } from 'quasar/wrappers';
 import { Network } from '@capacitor/network';
 import { ref } from 'vue';
+import { Preferences } from '@capacitor/preferences';
 
 export const isOnline = ref(true); // Reactive network status
 
@@ -9,9 +10,13 @@ async function setupNetworkListener() {
     // Listen for network changes
     const status = await Network.getStatus();
     isOnline.value = status.connected;
-    Network.addListener('networkStatusChange', (status) => {
+    Network.addListener('networkStatusChange', async(status) => {
         console.log(`📡 Network changed: ${status.connected ? 'Online' : 'Offline'}`);
         isOnline.value = status.connected; // Update reactive state
+        if (!isOnline.value){
+          await Preferences.remove({ key: 'building' })
+          await Preferences.remove({ key: 'floor' })
+        }
     });
 }
 

@@ -99,11 +99,6 @@
   resolved "https://registry.npmjs.org/@capacitor/preferences/-/preferences-7.0.0.tgz"
   integrity sha512-crlTtTIWcdlLfQULJ9ZiCPpvpm51WoZ8CIVG3+XSJGyavjD4bscHP15U24ya5SjpYmI44bGY9lvhvcSCfB5+AA==
 
-"@capacitor/status-bar@^7.0.0":
-  version "7.0.0"
-  resolved "https://registry.npmjs.org/@capacitor/status-bar/-/status-bar-7.0.0.tgz"
-  integrity sha512-wsvPkWkoSOXMIgVHu4c6P1sOuDSZ1ClUo5OpLRwj7u8DYzlV4jlmNzztQn2Lvsiqx1z4kfukSaqe40k1Lo4c9g==
-
 "@esbuild/linux-x64@0.24.0":
   version "0.24.0"
   resolved "https://registry.npmjs.org/@esbuild/linux-x64/-/linux-x64-0.24.0.tgz"

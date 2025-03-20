@@ -63,11 +63,11 @@
             <q-input dense class="col-5" filled label="Width" v-model="width" hint="In Inches"/>
             <q-input dense class="col-5" filled label="Diameter" v-model="diameter" hint="In Inches"/>
             <q-input dense class="col-5" filled label="Height" v-model="height" hint="In Inches"/>
-            <q-select dense class="col-12" filled label="UOM" v-model="uom.selected" use-input hide-selected fill-input
+            <!-- <q-select dense class="col-12" filled label="UOM" v-model="uom.selected" use-input hide-selected fill-input
               input-debounce="0" :options="uom.filterOptions" @new-value="(val, done) => createValue(uom, val, done)"
               @filter="(val, update) => filterFn(uom, val, update)" clearable :readonly="isReadonly"
-              :rules="[ val => val && val.length > 0 || 'Please choose the UOM']"/>
-            <q-input dense class="col-12" filled label="Descrpition" v-model="descrption" autogrow/>
+              :rules="[ val => val && val.length > 0 || 'Please choose the UOM']"/> -->
+            <q-input dense class="col-12" filled label="Descrpition" v-model="description" autogrow/>
             <FileUploader v-model:attachments="attachments" :id="props.inventoryLogId" />
             <ArchiveDialog v-if="isArchiveDialog" v-model:isArchiveDialog="isArchiveDialog" v-model:isArchive="isArchive" :id="props.inventoryLogId"/>
           </div>
@@ -84,7 +84,7 @@
   </q-layout>
 </template>
 <script setup>
-import { ref, reactive, onMounted, watch, computed, nextTick } from 'vue'
+import { ref, reactive, onMounted, watch, computed, inject } from 'vue'
 import { apiClient } from 'src/boot/axios';
 import { apiRequest } from 'src/boot/http.js';
 import { useRouter } from 'vue-router';
@@ -92,6 +92,8 @@ import { Notify } from 'quasar';
 import FileUploader from 'src/components/inventoryForm/FileUploader.vue'
 import ArchiveDialog from 'src/components/inventoryForm/ArchiveDialog.vue'
 import { isOnline } from 'src/boot/network';
+import { fetchOnlineData, getOnlineInventoryInfo, getOnlineInventoryData, inventoryOnlineUpdate, inventoryOnlineSubmit, updateArchiveOnline } from 'src/data/inventory.js'
+import { Preferences } from '@capacitor/preferences';
 
 const props = defineProps({
 	inventoryLogId: {
@@ -100,8 +102,8 @@ const props = defineProps({
 	},
 })
 
+const storageServ = inject('storageServ');
 const inventoryLogId = ref(props.inventoryLogId)
-
 const isReadonly = computed(() => !!props.inventoryLogId);
 const handleSubmit = () => {
   if (inventoryLogId.value) {
@@ -122,15 +124,13 @@ const myForm = ref(null)
 const item = createReactiveEntity();
 // const itemGroup = createReactiveEntity();
 const building = createReactiveEntity();
-building.selected = localStorage.getItem("building")
 const floor = createReactiveEntity();
-floor.selected = localStorage.getItem("floor")
 const manufacturer = createReactiveEntity();
-const uom = reactive({
-    options: ref([]),
-    filterOptions: ref([]),
-    selected: ref("Nos")
-  });
+// const uom = reactive({
+//     options: ref([]),
+//     filterOptions: ref([]),
+//     selected: ref("Nos")
+//   });
 const newQty = ref(0)
 const usedQty = ref(0)
 const damagedQty = ref(0)
@@ -139,7 +139,7 @@ const depth = ref(null)
 const width = ref(null)
 const diameter = ref(null)
 const height = ref(null)
-const descrption = ref(null)
+const description = ref(null)
 const attachments = ref([])
 const formData = reactive({
     item_code : item.selected,
@@ -147,7 +147,7 @@ const formData = reactive({
     building : building.selected,
     floor : floor.selected,
     manufacturer : manufacturer.selected,
-    uom : uom.selected,
+    // uom : uom.selected,
     new_qty : newQty,
     qty : usedQty,
     damaged_qty : damagedQty,
@@ -156,16 +156,27 @@ const formData = reactive({
     width : width,
     diameter : diameter,
     height : height,
-    descrption : descrption,
+    description : description,
     attachments: attachments
 })
 const isArchive = ref(false)
 const isArchiveDialog = ref(false)
 async function onSubmit(){
   try {
-    localStorage.setItem("building", formData.building)
-    localStorage.setItem("floor", formData.floor)
-    const response = await apiRequest.post('/api/method/turbotracker.mobile_integ.inventory.create_inventory_log', formData);
+    await Preferences.set({
+      key: 'building',
+      value: formData.building
+    });
+    await Preferences.set({
+      key: 'floor',
+      value:  formData.floor
+    });
+    if (isOnline.value){
+      await inventoryOnlineSubmit(formData)
+    }
+    else{
+      await storageServ.inventoryOfflineSubmit(formData)
+    }
     Notify.create({
       color: 'green-5',
       textColor: 'white',
@@ -187,7 +198,12 @@ async function onSubmit(){
 async function onUpdate(){
   try {
     formData.name = inventoryLogId.value
-    const response = await apiRequest.post('/api/method/turbotracker.mobile_integ.inventory.update_inventory_log', formData);
+    if (isOnline.value){
+      await inventoryOnlineUpdate(formData)
+    }
+    else{
+      await storageServ.inventoryOfflineUpdate(formData)
+    }
     Notify.create({
       color: 'green-5',
       textColor: 'white',
@@ -204,12 +220,6 @@ async function onUpdate(){
       message: `API Error:' ${error.response?.data?.exception || error.message}`
     })
   }
-}
-
-async function fetchData(endpoint, entity) {
-  const response = await apiRequest.get(endpoint);
-  entity.options = response.data.map(row => row.name);
-  entity.filterOptions = entity.options;
 }
 
 const get_apiEndpoint = (doctype, filter=[]) => {
@@ -231,16 +241,24 @@ const apiEndpoints = reactive({
   building: get_apiEndpoint("Warehouse", apiFilters.warehouse),
   floor: get_apiEndpoint("Warehouse", apiFilters.floor),
   manufacturer: get_apiEndpoint("Manufacturer"),
-  uom: get_apiEndpoint('UOM')
+  // uom: get_apiEndpoint('UOM')
 });
 
+async function getFilterOptions(){
+  if(isOnline.value){
+    item.options = item.filterOptions = [...await fetchOnlineData(apiEndpoints.item)]
+    building.options = building.filterOptions = [...await fetchOnlineData(apiEndpoints.building)]
+    floor.options = floor.filterOptions = [...await fetchOnlineData(apiEndpoints.floor)]
+    manufacturer.options = manufacturer.filterOptions = [...await fetchOnlineData(apiEndpoints.manufacturer)]
+  }
+  else{
+    item.options = item.filterOptions = [...await storageServ.fetchOfflineData("inventory", "item_code")]
+    building.options = building.filterOptions = [...await storageServ.fetchOfflineData("building")]
+    floor.options = floor.filterOptions = [...await storageServ.fetchOfflineData("floor")]
+    manufacturer.options = manufacturer.filterOptions = [...await storageServ.fetchOfflineData("manufacturer")]
+  }
+}
 
-const get_item_list = (item_api) => fetchData(item_api, item);
-// const get_item_groups = (item_group_api) => fetchData(item_group_api, itemGroup);
-const get_buildings = (building_api) => fetchData(building_api, building);
-const get_floors = (floor_api) => fetchData(floor_api, floor);
-const get_manufacturers = (manufacturer_api) => fetchData(manufacturer_api, manufacturer);
-const get_uoms = (uom_api) => fetchData(uom_api, uom);
 
 function createFilterFn() {
   return (entity, val, update) => {
@@ -284,7 +302,7 @@ watch(
 	async (value) => {
     formData.item_code = value
     if (value && formData.floor){
-      await getInventoryData(formData.item_code, value)
+      await getInventoryData(value, formData.floor)
     }
     else if(inventoryLogId.value){
       inventoryLogId.value = null
@@ -295,14 +313,15 @@ watch(
 
 watch(
 	() => building.selected,
-	(value) => {
+	async(value) => {
     if (!props.inventoryLogId && floor.selected){
       floor.selected = ""
     }
     let pfilter = [...apiFilters.floor]
     if (value) pfilter.push(["parent_warehouse", "=", value])
     apiEndpoints.floor = get_apiEndpoint("Warehouse", pfilter)
-		get_floors(apiEndpoints.floor)
+    if (isOnline.value) floor.options = floor.filterOptions = [...await fetchOnlineData(apiEndpoints.floor)]
+    else floor.options = floor.filterOptions = [...await storageServ.fetchOfflineData("floor")]
     formData.building = value
 	}
 )
@@ -328,24 +347,29 @@ watch(
 	}
 )
 
-watch(
-	() => uom.selected,
-	(value) => {
-    formData.uom = value
-	}
-)
+// watch(
+// 	() => uom.selected,
+// 	(value) => {
+//     formData.uom = value
+// 	}
+// )
 
 async function getInventoryLog(){
   if (props.inventoryLogId){
     const params = {
       "log_id": props.inventoryLogId
     }
-    const response = await apiRequest.get('/api/method/turbotracker.mobile_integ.inventory.get_inventory_log', params)
-    const data = response.message
-    console.log(response)
-    isArchive.value = data.archived
-    attachments.value = data.attachments
-    updateFormData(data)
+    let response
+    if(isOnline.value){
+      response = await getOnlineInventoryInfo(params)
+      response = response.message
+    }
+    else{
+      response = await storageServ.getOfflineInventoryInfo(props.inventoryLogId)
+    }
+    isArchive.value = response.archived
+    attachments.value = response.attachments
+    updateFormData(response)
   }
 }
 
@@ -354,11 +378,16 @@ async function getInventoryData(item_code, floor){
       "item_code": item_code,
       "floor": floor
     }
-    const response = await apiRequest.get('/api/method/turbotracker.api.get_item_stock', params)
-    const data = response.message
-    console.log(response)
-    updateFormData(data)
-    inventoryLogId.value = data.name
+    let response
+    if(isOnline.value){
+      response = await getOnlineInventoryData(params)
+      response = response?.message ? response?.message : response
+    }
+    else{
+      response = await storageServ.getOfflineInventoryData(params)
+    }
+    if (Object.keys(response).length > 0) updateFormData(response)
+    inventoryLogId.value = response.name
 }
 
 function updateFormData(data){
@@ -368,7 +397,7 @@ function updateFormData(data){
     building.selected = data.building
     floor.selected = data.floor
     manufacturer.selected = data.manufacturer
-    uom.selected = data.uom
+    // uom.selected = data.uom
     newQty.value = data.new_qty
     usedQty.value = data.qty
     damagedQty.value = data.damaged_qty
@@ -377,14 +406,14 @@ function updateFormData(data){
     width.value = data.width
     diameter.value = data.diameter
     height.value = data.height
-    descrption.value = data.descrption
+    description.value = data.description
   }
 }
 
 function resetFormData(data){
   if (data){
     manufacturer.selected = ""
-    uom.selected = ""
+    // uom.selected = ""
     newQty.value = 0
     usedQty.value = 0
     damagedQty.value = 0
@@ -393,19 +422,10 @@ function resetFormData(data){
     width.value = ""
     diameter.value = ""
     height.value = ""
-    descrption.value = ""
+    description.value = ""
   }
 }
 
-onMounted(
-  get_item_list(apiEndpoints.item),
-  // get_item_groups(apiEndpoints.itemGroup),
-  get_buildings(apiEndpoints.building),
-  get_floors(apiEndpoints.floor),
-  get_manufacturers(apiEndpoints.manufacturer),
-  get_uoms(apiEndpoints.uom),
-  getInventoryLog()
-)
 const itemfilterFn = (val, update) => {
   update(() => {
     const needle = val.toLowerCase()
@@ -415,7 +435,17 @@ const itemfilterFn = (val, update) => {
 
 async function unArchiveLog(){
   try {
-    const response = await apiRequest.post('/api/method/turbotracker.mobile_integ.inventory.archive_log', {"name": inventoryLogId.value, "archive_status": false});
+    const params = {
+      "name": inventoryLogId.value,
+      "archive_status": false
+    }
+    let response
+    if (isOnline.value){
+      response = await updateArchiveOnline(params)
+    }
+    else{
+      response = await storageServ.updateArchiveOffline(params)
+    }
     Notify.create({
       color: 'green-5',
       textColor: 'white',
@@ -434,6 +464,26 @@ async function unArchiveLog(){
     })
   }
 }
+
+watch(
+  () => isOnline.value,
+  async(value) => {
+    if(!value){
+      const memBuilding = await Preferences.get({ key: 'building' })
+      building.selected = memBuilding.value
+    }
+    getFilterOptions()
+  }
+)
+
+onMounted(async() =>{
+  const memBuilding = await Preferences.get({ key: 'building' })
+  building.selected = memBuilding.value
+  const memFloor = await Preferences.get({ key: 'floor' })
+  floor.selected = memFloor.value
+  getFilterOptions()
+  getInventoryLog()
+})
 
 </script>
 <style lang="css">

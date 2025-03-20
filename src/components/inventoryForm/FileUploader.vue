@@ -58,12 +58,15 @@
 
 </template>
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, inject } from 'vue'
 import { apiClient } from 'src/boot/axios';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera'
 import FilePreview from 'src/components/inventoryForm/FilePreview.vue'
 import { apiRequest } from 'src/boot/http.js';
+import { isOnline } from 'src/boot/network';
+import { uploadAttachmentOnline, deleteAttachmentOnline } from 'src/data/inventory.js'
 
+const storageServ = inject('storageServ');
 const props = defineProps(['attachments', 'id']);
 const emit = defineEmits(['update:attachments']);
 const attachment_len = ref(props.attachments.length)
@@ -96,18 +99,15 @@ const extractBase64 = (dataUrl) => {
 };
 
 async function upload_attachments(content, fileName) {
-  let attachedTo = {
-    dt: "Inventory Log",
-    dn: props.id
+  let response = {}
+  if(isOnline.value){
+    response = uploadAttachmentOnline(props.id, content, fileName)
+    return response
   }
-  let data = {
-    content: content,
-    filename: fileName,
+  else{
+    response = storageServ.uploadAttachmentOffline(props.id, content, fileName)
+    return response
   }
-  if (props.id) Object.assign(data, attachedTo);
-  data = JSON.stringify(data)
-  const response = await apiRequest.post('/api/method/turbotracker.api.upload_base64_file', data);
-  return response.message
 }
 
 watch(
@@ -147,7 +147,12 @@ function confirmDeleteAttachment(image) {
 
 async function deleteAttachment(image) {
   confirmDelLoading.value = true
-  const response = await apiRequest.post('/api/method/turbotracker.mobile_integ.inventory.delete_attachment', { "name": image.id });
+  if (isOnline.value){
+    await deleteAttachmentOnline(image.id)
+  }
+  else{
+    await storageServ.removeAttachmentOffline(image.id)
+  }
   const updatedAttachments = props.attachments.filter(item => item.id !== image.id);
   emit('update:attachments', updatedAttachments);
   confirmDelLoading.value = false

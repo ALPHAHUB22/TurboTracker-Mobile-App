@@ -15,6 +15,17 @@ export const UserUpgradeStatements = [
           id INTEGER PRIMARY KEY AUTOINCREMENT,
           name TEXT NOT NULL
       );`,
+      `CREATE TABLE IF NOT EXISTS manufacturer (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT NOT NULL
+      );`,
+      `CREATE TABLE IF NOT EXISTS attachments (
+          id TEXT PRIMARY KEY NOT NULL,
+          file_name TEXT NOT NULL,
+          file_path TEXT NOT NULL,
+          inventory_id TEXT,
+          creation TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%f', 'now'))
+      );`,
       `CREATE TABLE IF NOT EXISTS inventory (
           name TEXT PRIMARY KEY,
           item_code TEXT NOT NULL,
@@ -30,7 +41,11 @@ export const UserUpgradeStatements = [
           diameter REAL,
           height REAL,
           description TEXT,
-          archived INTEGER NOT NULL DEFAULT 0
+          archived INTEGER NOT NULL DEFAULT 0,
+          islocal INTEGER NOT NULL DEFAULT 0,
+          isupdated INTEGER NOT NULL DEFAULT 0,
+          issync INTEGER NOT NULL DEFAULT 0,
+          creation TEXT DEFAULT (strftime('%Y-%m-%d %H:%M:%f', 'now'))
       );`
     ],
   },

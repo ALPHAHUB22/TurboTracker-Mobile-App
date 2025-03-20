@@ -43,3 +43,55 @@ export async function getOnlineInventoryList(params){
   const response = await apiRequest.get('/api/method/turbotracker.api.get', params)
   return response
 }
+
+export async function fetchOnlineData(endpoint) {
+  const response = await apiRequest.get(endpoint);
+  const entityOptions = response.data.map(row => row.name);
+  return entityOptions
+}
+
+export async function getOnlineInventoryInfo(params){
+  const response = await apiRequest.get('/api/method/turbotracker.mobile_integ.inventory.get_inventory_log', params)
+  return response
+}
+
+export async function getOnlineInventoryData(params){
+  const response = await apiRequest.get('/api/method/turbotracker.api.get_item_stock', params)
+  return response
+}
+
+export async function inventoryOnlineSubmit(formData){
+  await apiRequest.post('/api/method/turbotracker.mobile_integ.inventory.create_inventory_log', formData);
+}
+
+export async function inventoryOnlineUpdate(formData){
+  await apiRequest.post('/api/method/turbotracker.mobile_integ.inventory.update_inventory_log', formData);
+}
+
+export async function updateArchiveOnline(params){
+  await apiRequest.post('/api/method/turbotracker.mobile_integ.inventory.archive_log', params);
+}
+
+export async function uploadAttachmentOnline(logId, content, fileName){
+  let attachedTo = {
+    dt: "Inventory Log",
+    dn: logId
+  }
+  let data = {
+    content: content,
+    filename: fileName,
+  }
+  if (logId) Object.assign(data, attachedTo);
+  data = JSON.stringify(data)
+  const response = await apiRequest.post('/api/method/turbotracker.api.upload_base64_file', data);
+  return response.message
+}
+
+export async function deleteAttachmentOnline(attachmentId){
+  await apiRequest.post('/api/method/turbotracker.mobile_integ.inventory.delete_attachment', { "name": attachmentId });
+}
+
+export async function syncToServer(params){
+  const response = await apiRequest.post('/api/method/turbotracker.mobile_integ.inventory.sync_to_server', params);
+  return response
+}
